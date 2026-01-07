@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>문명: 위대한 유산 (Final)</title>
+    <title>문명: 위대한 유산 (No AI)</title>
     <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -14,13 +14,8 @@
 
         body {
             font-family: 'Noto Sans KR', sans-serif;
+            overflow: hidden;
             background-color: #0f172a;
-        }
-
-        @media (min-width: 1280px) {
-            body {
-                overflow: hidden;
-            }
         }
 
         ::-webkit-scrollbar {
@@ -117,22 +112,6 @@
         .header-bg {
             transition: background-image 1s ease-in-out;
         }
-
-        @keyframes pulse-purple {
-
-            0%,
-            100% {
-                box-shadow: 0 0 0 0 rgba(168, 85, 247, 0.7);
-            }
-
-            70% {
-                box-shadow: 0 0 0 10px rgba(168, 85, 247, 0);
-            }
-        }
-
-        .animate-pulse-purple {
-            animation: pulse-purple 2s infinite;
-        }
     </style>
 </head>
 
@@ -141,39 +120,6 @@
 
     <script type="text/babel">
         const { useState, useEffect, useRef, useCallback } = React;
-        const defaultApiKey = ""; // Default empty
-
-        // --- Gemini API 호출 함수 ---
-        const callGemini = async (prompt, isJson = false, userKey = "") => {
-            const keyToUse = userKey || defaultApiKey;
-            if (!keyToUse) return isJson ? { message: "API 키가 없습니다.", amount: 0 } : "API 키가 설정되지 않았습니다.";
-            try {
-                const payload = {
-                    contents: [{ parts: [{ text: prompt }] }]
-                };
-
-                if (isJson) {
-                    payload.generationConfig = { responseMimeType: "application/json" };
-                }
-
-                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${keyToUse}`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-                if (!response.ok) throw new Error('Network response was not ok');
-                const data = await response.json();
-                const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
-
-                if (isJson && text) {
-                    return JSON.parse(text);
-                }
-                return text || "응답을 생성할 수 없습니다.";
-            } catch (error) {
-                console.error("Gemini API Error:", error);
-                return isJson ? { message: "AI 통신 오류", amount: 0 } : "AI 통신 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.";
-            }
-        };
 
         // --- 아이콘 컴포넌트 ---
         const IconBase = ({ children, size = 24, className = "", onClick, title }) => (
@@ -181,7 +127,6 @@
         );
 
         const Icons = {
-            Eye: (p) => <IconBase {...p}><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" /><circle cx="12" cy="12" r="3" /></IconBase>,
             User: (p) => <IconBase {...p}><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></IconBase>,
             Hammer: (p) => <IconBase {...p}><path d="m15 12-8.5 8.5c-.83.83-2.17.83-3 0 0-.83 0-2.17.83-3L12 9" /><path d="M17.64 15 22 10.64" /><path d="m20.91 11.7-1.25-1.25c-.6-.6-.93-1.4-.93-2.25V7.86c0-.55-.45-1-1-1H14.14c-.83 0-1.64.32-2.25.92L9.64 10" /></IconBase>,
             BrainCircuit: (p) => <IconBase {...p}><path d="M12 4.5a2.5 2.5 0 0 0-4.96-.46 2.5 2.5 0 0 0-1.98 3 2.5 2.5 0 0 0-1.32 4.24 3 3 0 0 0 .34 5.58 2.5 2.5 0 0 0 2.96 3.08 2.5 2.5 0 0 0 4.91.05L12 20V4.5Z" /><path d="M16 8V5c0-1.1.9-2 2-2" /><path d="M12 13h4" /><path d="M12 18h6a2 2 0 0 1 2 2v1" /><path d="M12 8h8" /></IconBase>,
@@ -207,14 +152,10 @@
             Maximize: (p) => <IconBase {...p}><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3" /></IconBase>,
             Minimize: (p) => <IconBase {...p}><path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3" /></IconBase>,
             ArrowUp: (p) => <IconBase {...p}><line x1="12" x2="12" y1="19" y2="5" /><polyline points="5 12 12 5 19 12" /></IconBase>,
-            Wrench: (p) => <IconBase {...p}><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" /></IconBase>,
-            Lightbulb: (p) => <IconBase {...p}><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-1 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5" /><path d="M9 18h6" /><path d="M10 22h4" /></IconBase>,
-            FileText: (p) => <IconBase {...p}><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" /><polyline points="14 2 14 8 20 8" /><line x1="16" x2="8" y1="13" y2="13" /><line x1="16" x2="8" y1="17" y2="17" /><line x1="10" x2="8" y1="9" y2="9" /></IconBase>,
-            Sparkles: (p) => <IconBase {...p}><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z" /><path d="M5 3v4" /><path d="M9 5H5" /><path d="M19 3v4" /><path d="M15 5h4" /><path d="M15 19h4" /><path d="M19 21v-4" /></IconBase>,
-            Settings: (p) => <IconBase {...p}><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.18-.08a2 2 0 0 0-2 0l-.45.45a2 2 0 0 0 0 2l.08.18a2 2 0 0 1 0 2l-.25.43a2 2 0 0 1-1.73 1l-.18.09h-.18a2 2 0 0 0-2 2v.44a2 2 0 0 0 2 2v.18a2 2 0 0 1 1 1.73l.25.43a2 2 0 0 1 0 2l-.08.18a2 2 0 0 0 0 2l.45.45a2 2 0 0 0 2 0l.18-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.18.08a2 2 0 0 0 2 0l.45-.45a2 2 0 0 0 0-2l-.08-.18a2 2 0 0 1 0-2l.25-.43a2 2 0 0 1 1.73-1l.18-.09h.18a2 2 0 0 0 2-2v-.44a2 2 0 0 0-2-2v-.18a2 2 0 0 1-1-1.73l-.25-.43a2 2 0 0 1 0-2l.08-.18a2 2 0 0 0 0-2l.45.45a2 2 0 0 0 2 0l.18.08a2 2 0 0 1-2 0l-.43.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" /><circle cx="12" cy="12" r="3" /></IconBase>
+            Wrench: (p) => <IconBase {...p}><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" /></IconBase>
         };
 
-        const { Pickaxe, Scroll, Zap, User, Rocket, FlaskConical, Hammer, Wheat, BrainCircuit, Shield, Star, Globe, Volume2, VolumeX, Crown, Save, RotateCcw, Trash, Home, X, FilePlus, Flame, Maximize, Minimize, ArrowUp, Wrench, Lightbulb, FileText, Sparkles, Eye, Settings } = Icons;
+        const { Pickaxe, Scroll, Zap, User, Rocket, FlaskConical, Hammer, Wheat, BrainCircuit, Shield, Star, Globe, Volume2, VolumeX, Crown, Save, RotateCcw, Trash, Home, X, FilePlus, Flame, Maximize, Minimize, ArrowUp, Wrench } = Icons;
 
         // --- 사운드 매니저 ---
         const useSound = () => {
@@ -275,10 +216,6 @@
                     osc.type = 'sawtooth'; osc.frequency.setValueAtTime(150, now); osc.frequency.linearRampToValueAtTime(100, now + 0.1);
                     gainNode.gain.setValueAtTime(0.05, now); gainNode.gain.linearRampToValueAtTime(0.001, now + 0.1);
                     osc.start(now); osc.stop(now + 0.1);
-                } else if (type === 'ai') { // AI 효과음
-                    osc.type = 'sine'; osc.frequency.setValueAtTime(800, now); osc.frequency.linearRampToValueAtTime(1200, now + 0.1); osc.frequency.linearRampToValueAtTime(800, now + 0.3);
-                    gainNode.gain.setValueAtTime(0.05, now); gainNode.gain.linearRampToValueAtTime(0.01, now + 0.3);
-                    osc.start(now); osc.stop(now + 0.3);
                 }
             }, [isMuted, isInit]);
             const toggleMute = () => setIsMuted(!isMuted);
@@ -306,6 +243,7 @@
             neanderthal: { name: '거인의 제단', desc: '고대의 힘: 생산력 획득량 3배', cost: { food: 500, prod: 2000, sci: 0 }, effect: 'prod_boost' },
             atlantean: { name: '심해의 수정탑', desc: '잃어버린 기술: 과학 획득량 2배', cost: { food: 2000, prod: 500, sci: 2000 }, effect: 'sci_boost' }
         };
+
         // Unsplash ID 기반 이미지 URL
         const AGES = [
             { id: 0, name: '원시 시대', color: 'text-stone-300', bg: 'bg-stone-900', img: 'https://images.unsplash.com/photo-1518176258769-e3d62283dc15?auto=format&fit=crop&w=1600&q=80' },
@@ -338,45 +276,6 @@
         const SLOT_COUNT = 3;
 
         // --- 서브 컴포넌트 ---
-        function SettingsModal({ onClose, currentKey, onSave }) {
-            const [key, setKey] = useState(currentKey);
-
-            return (
-                <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4 animate-fade-in">
-                    <div className="bg-slate-800 rounded-xl border border-slate-600 max-w-md w-full shadow-2xl overflow-hidden">
-                        <div className="p-4 border-b border-slate-700 flex justify-between items-center bg-slate-900/50">
-                            <h3 className="font-bold text-lg text-white flex items-center gap-2">
-                                <Settings size={20} className="text-slate-400" /> 설정
-                            </h3>
-                            <button onClick={onClose} className="p-1 hover:bg-white/10 rounded transition-colors"><X size={20} /></button>
-                        </div>
-                        <div className="p-6 space-y-4">
-                            <div>
-                                <label className="block text-sm font-medium text-slate-300 mb-2">Google Gemini API Key</label>
-                                <input
-                                    type="password"
-                                    value={key}
-                                    onChange={(e) => setKey(e.target.value)}
-                                    placeholder="API Key를 입력하세요"
-                                    className="w-full bg-slate-900 border border-slate-600 rounded p-3 text-white focus:outline-none focus:border-blue-500"
-                                />
-                                <p className="text-xs text-slate-500 mt-2">
-                                    * AI 기능을 사용하려면 유효한 API 키가 필요합니다.<br />
-                                    * 입력된 키는 브라우저 로컬 스토리지에 안전하게 저장됩니다.
-                                </p>
-                            </div>
-                            <button
-                                onClick={() => { onSave(key); onClose(); }}
-                                className="w-full py-3 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded transition-colors"
-                            >
-                                저장하기
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            );
-        }
-
         function SaveLoadModal({ mode, onClose, onAction, slots }) {
             return (
                 <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4 animate-fade-in">
@@ -426,7 +325,6 @@
             );
         }
 
-        // 업그레이드 모달 컴포넌트 추가
         function UpgradeModal({ onClose, buildings, buildingLevels, resources, onUpgrade, getUpgradeCost }) {
             return (
                 <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4 animate-fade-in">
@@ -478,35 +376,6 @@
                                     </div>
                                 );
                             })}
-                        </div>
-                    </div>
-                </div>
-            );
-        }
-
-        // AI 모달 (통합용)
-        function AIModal({ isOpen, onClose, title, content, isLoading }) {
-            if (!isOpen) return null;
-            return (
-                <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4 animate-fade-in">
-                    <div className="bg-slate-800 rounded-xl border border-purple-500 max-w-lg w-full shadow-2xl overflow-hidden relative">
-                        <div className="p-4 border-b border-slate-700 flex justify-between items-center bg-purple-900/20">
-                            <h3 className="font-bold text-lg text-purple-200 flex items-center gap-2">
-                                <Sparkles size={20} className="text-purple-400" /> {title}
-                            </h3>
-                            <button onClick={onClose} className="p-1 hover:bg-white/10 rounded transition-colors"><X size={20} /></button>
-                        </div>
-                        <div className="p-6 min-h-[150px] flex items-center justify-center">
-                            {isLoading ? (
-                                <div className="text-center">
-                                    <div className="w-12 h-12 bg-purple-500 rounded-full mx-auto mb-4 animate-pulse-purple"></div>
-                                    <p className="text-slate-400 animate-pulse">Gemini가 역사를 분석 중입니다...</p>
-                                </div>
-                            ) : (
-                                <div className="text-slate-200 whitespace-pre-wrap leading-relaxed">
-                                    {content}
-                                </div>
-                            )}
                         </div>
                     </div>
                 </div>
@@ -617,23 +486,6 @@
             const [modalMode, setModalMode] = useState('save');
             const [isUpgradeModalOpen, setIsUpgradeModalOpen] = useState(false);
             const [isFullScreen, setIsFullScreen] = useState(false);
-
-            // AI States
-            const [aiModalOpen, setAiModalOpen] = useState(false);
-            const [aiLoading, setAiLoading] = useState(false);
-            const [aiContent, setAiContent] = useState('');
-            const [aiTitle, setAiTitle] = useState('');
-
-            // API Key State (with initialization from localStorage)
-            const [userApiKey, setUserApiKey] = useState(() => {
-                return defaultApiKey || localStorage.getItem('civ_api_key') || "";
-            });
-            const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-
-            const updateApiKey = (key) => {
-                setUserApiKey(key);
-                localStorage.setItem('civ_api_key', key);
-            };
 
             const refreshSlots = () => {
                 const loaded = {};
@@ -970,127 +822,6 @@
                 return Math.floor(200 * Math.pow(1.1, currentLevel));
             }
 
-            const handleAdvisorClick = async () => {
-                if (!userApiKey) {
-                    setIsSettingsOpen(true);
-                    return;
-                }
-
-                setAiTitle("전략 조언");
-                setAiContent("");
-                setAiModalOpen(true);
-                setAiLoading(true);
-                playSound('ai');
-
-                const prompt = `
-                    당신은 '문명: 위대한 유산' 게임의 AI 전략 조언가입니다. 
-                    현재 플레이어 상태:
-                    - 문명: ${selectedRace.name}
-                    - 시대: ${AGES[currentAge].name}
-                    - 자원: 식량 ${Math.floor(resources.food)}, 생산력 ${Math.floor(resources.prod)}, 과학 ${Math.floor(resources.sci)}
-                    - 건물: 농장 ${buildings.farm}, 광산 ${buildings.mine}, 연구소 ${buildings.lab}
-                    
-                    현재 상황에 가장 필요한 전략적 조언을 한국어 한 문장으로 부드럽게(해요체) 해주세요.
-                `;
-
-                const response = await callGemini(prompt, false, userApiKey);
-                setAiContent(response);
-                setAiLoading(false);
-            };
-
-            const handleHistoryClick = async () => {
-                if (!userApiKey) {
-                    setIsSettingsOpen(true);
-                    return;
-                }
-
-                setAiTitle("문명 연대기");
-                setAiContent("");
-                setAiModalOpen(true);
-                setAiLoading(true);
-                playSound('ai');
-
-                const recentLogs = logs.slice(0, 10).join("\n");
-                const prompt = `
-                    당신은 역사를 기록하는 사관입니다. 다음은 이 문명의 최근 기록입니다:
-                    ${recentLogs}
-                    
-                    이 기록들을 바탕으로 이 문명의 현재 상황을 웅장하고 서사적인 톤의 한국어로 2~3문장 요약해주세요.
-                `;
-
-                const response = await callGemini(prompt, false, userApiKey);
-                setAiContent(response);
-                setAiLoading(false);
-            };
-
-            const handleOracleClick = async () => {
-                if (!userApiKey) {
-                    setIsSettingsOpen(true);
-                    return;
-                }
-
-                const cost = 200 * (currentAge + 1);
-                if (resources.sci < cost) {
-                    addLog("신탁을 받기 위한 과학력이 부족합니다.");
-                    playSound('error');
-                    return;
-                }
-
-                setResources(prev => ({ ...prev, sci: prev.sci - cost }));
-
-                setAiTitle("신의 계시");
-                setAiContent("");
-                setAiModalOpen(true);
-                setAiLoading(true);
-                playSound('ai');
-
-                const baseAmount = 500 * Math.pow(2, currentAge);
-
-                const prompt = `
-                    당신은 문명 게임의 신입니다. 현재 ${AGES[currentAge].name} 시대의 ${selectedRace.name} 문명에게 일어날 돌발 이벤트를 생성하세요.
-                    
-                    다음 JSON 스키마를 따라 응답하세요:
-                    {
-                        "message": "이벤트에 대한 신비롭거나 극적인 묘사 (한국어, 2문장 이내)",
-                        "target": "food" 또는 "prod" 또는 "sci",
-                        "amount": 정수 (범위: -${Math.floor(baseAmount * 0.5)} ~ +${baseAmount})
-                    }
-                    
-                    긍정적인 이벤트일 확률 70%, 부정적인 이벤트일 확률 30%입니다.
-                    문명의 특성(${selectedRace.name})을 반영하면 더 좋습니다.
-                `;
-
-                try {
-                    const result = await callGemini(prompt, true, userApiKey);
-
-                    if (typeof result === 'string') {
-                        setAiContent("신의 목소리가 희미하여 들리지 않습니다... (오류)");
-                    } else {
-                        setAiContent(result.message);
-
-                        if (result.target && result.amount) {
-                            setResources(prev => ({
-                                ...prev,
-                                [result.target]: Math.max(0, prev[result.target] + result.amount)
-                            }));
-
-                            const resourceName = result.target === 'food' ? '식량' : result.target === 'prod' ? '생산' : '과학';
-                            const sign = result.amount > 0 ? '+' : '';
-                            addLog(`[신탁] ${resourceName} ${sign}${result.amount.toLocaleString()}`);
-
-                            if (result.amount > 0) playSound('research');
-                            else playSound('disaster');
-                        }
-                    }
-                    setAiLoading(false);
-                } catch (e) {
-                    console.error(e);
-                    setAiContent("신의 목소리가 희미하여 들리지 않습니다... (통신 오류)");
-                    setAiLoading(false);
-                    setResources(prev => ({ ...prev, sci: prev.sci + cost }));
-                }
-            };
-
 
             if (gameState === 'selection') {
                 return (
@@ -1109,8 +840,6 @@
                 <div className={`flex flex-col h-screen max-w-7xl mx-auto bg-slate-900 shadow-2xl ${disasterActive ? 'animate-shake disaster-flash' : ''}`}>
                     {isModalOpen && <SaveLoadModal mode={modalMode} slots={slotsData} onClose={() => setIsModalOpen(false)} onAction={handleSlotAction} />}
                     {isUpgradeModalOpen && <UpgradeModal onClose={() => setIsUpgradeModalOpen(false)} buildings={buildings} buildingLevels={buildingLevels} resources={resources} onUpgrade={upgradeBuilding} getUpgradeCost={getUpgradeCost} />}
-                    {aiModalOpen && <AIModal isOpen={aiModalOpen} onClose={() => setAiModalOpen(false)} title={aiTitle} content={aiContent} isLoading={aiLoading} />}
-                    {isSettingsOpen && <SettingsModal onClose={() => setIsSettingsOpen(false)} currentKey={userApiKey} onSave={updateApiKey} />}
 
                     {/* 상단 헤더 */}
                     <header
@@ -1121,13 +850,6 @@
 
                         {/* 컨트롤 버튼 그룹 */}
                         <div className="absolute top-4 right-4 z-20 flex gap-2">
-                            <button onClick={() => setIsSettingsOpen(true)} title="설정" className="p-2 bg-black/40 backdrop-blur-sm rounded-full hover:bg-black/60 text-white transition-colors border border-white/10">
-                                <Settings size={18} />
-                            </button>
-                            <button onClick={handleAdvisorClick} title="AI 전략 조언" className="p-2 bg-purple-600/80 backdrop-blur-sm rounded-full hover:bg-purple-500 text-white transition-colors border border-purple-400/50 shadow-lg animate-pulse">
-                                <Lightbulb size={18} />
-                            </button>
-                            <div className="w-px h-6 bg-white/20 mx-1 self-center"></div>
                             <button onClick={toggleFullScreen} title={isFullScreen ? "전체화면 종료" : "전체화면"} className="p-2 bg-black/40 backdrop-blur-sm rounded-full hover:bg-black/60 text-white transition-colors border border-white/10">
                                 {isFullScreen ? <Minimize size={18} /> : <Maximize size={18} />}
                             </button>
@@ -1168,9 +890,9 @@
                     </header>
 
                     {/* 메인 콘텐츠 */}
-                    <div className="flex flex-col xl:flex-row flex-1 min-h-0 relative z-10 overflow-hidden xl:overflow-hidden">
+                    <div className="flex flex-col lg:flex-row flex-1 min-h-0 relative z-10 overflow-hidden">
                         {/* 왼쪽 패널 */}
-                        <div className="w-full xl:w-1/3 border-b xl:border-b-0 xl:border-r border-white/10 bg-slate-800/80 backdrop-blur-sm overflow-y-auto xl:overflow-y-auto h-auto xl:h-full">
+                        <div className="w-full lg:w-1/3 border-b lg:border-b-0 lg:border-r border-white/10 bg-slate-800/80 backdrop-blur-sm overflow-y-auto h-full">
                             <div className="p-4">
                                 <SectionTitle title="기본 활동" />
                                 <div className="grid grid-cols-1 gap-3 mb-6">
@@ -1203,12 +925,11 @@
                                         const cost = getBuildingCost(key);
                                         const canAfford = resources.food >= cost.food && resources.prod >= cost.prod && resources.sci >= cost.sci;
 
-                                        // 업그레이드 반영된 개당 생산량 계산
-                                        const level = buildingLevels[key] || 0;
-                                        const baseOutput = 1;
-                                        const bonusOutput = baseOutput * (level * 0.2); // 레벨당 20% 추가
-
+                                        const currentEff = 1 + (buildingLevels[key] || 0) * 0.2;
                                         const outputName = key === 'farm' ? '식량' : key === 'mine' ? '생산' : '과학';
+
+                                        const baseOutput = 1;
+                                        const bonusOutput = baseOutput * ((buildingLevels[key] || 0) * 0.2);
 
                                         return (
                                             <div key={key} onClick={() => buyBuilding(key)}
@@ -1254,29 +975,7 @@
                                     <ArrowUp size={16} className="text-slate-500 group-hover:text-white" />
                                 </button>
 
-                                {/* AI 신탁 버튼 추가 */}
-                                <button
-                                    onClick={handleOracleClick}
-                                    className="w-full bg-indigo-900/40 hover:bg-indigo-800/60 border border-indigo-500/50 p-4 rounded-lg flex items-center justify-between group mb-6 transition-all"
-                                >
-                                    <div className="flex items-center gap-3">
-                                        <div className="bg-indigo-950 p-2 rounded text-indigo-400 group-hover:text-indigo-300">
-                                            <Eye size={20} />
-                                        </div>
-                                        <div className="text-left">
-                                            <div className="font-bold text-slate-200 flex items-center gap-2">
-                                                신탁 받기 <span className="text-[10px] bg-indigo-600 text-white px-1.5 rounded-full">AI</span>
-                                            </div>
-                                            <div className="text-xs text-slate-400">과학을 바쳐 신의 계시(이벤트)를 받습니다</div>
-                                        </div>
-                                    </div>
-                                    <div className="text-xs text-blue-400 font-mono">
-                                        -{200 * (currentAge + 1)} 🧪
-                                    </div>
-                                </button>
-
                                 <SectionTitle title="불가사의" />
-                                {/* ... existing wonder code ... */}
                                 {hasWonder ? (
                                     <div className="p-4 rounded-lg bg-yellow-900/20 border border-yellow-500/50 text-center wonder-glow">
                                         <Crown size={32} className="mx-auto text-yellow-500 mb-2" />
@@ -1308,16 +1007,11 @@
                             </div>
                         </div>
 
-                        {/* ... existing center and right panels ... */}
                         {/* 중앙 패널 */}
-                        {/* 중앙 패널 */}
-                        <div className="w-full xl:w-1/3 flex flex-col bg-slate-900 relative border-b xl:border-b-0 h-[500px] xl:h-full overflow-hidden">
+                        <div className="w-full lg:w-1/3 flex flex-col bg-slate-900 relative border-b lg:border-b-0 h-full overflow-hidden">
                             <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-20 pointer-events-none"></div>
-                            <div className="p-4 flex-none border-b border-white/5 flex justify-between items-center">
+                            <div className="p-4 flex-none border-b border-white/5">
                                 <SectionTitle title="역사의 기록" />
-                                <button onClick={handleHistoryClick} className="text-xs flex items-center gap-1 text-slate-400 hover:text-purple-300 transition-colors" title="AI 역사 요약">
-                                    <Sparkles size={14} /> <span>연대기 작성</span>
-                                </button>
                             </div>
                             <div className="flex-1 space-y-2 p-4 font-mono text-sm overflow-y-auto">
                                 {logs.map((log, i) => (
@@ -1330,7 +1024,6 @@
                                         <span className={`
                                             ${log.includes('[재해]') ? 'text-red-400 font-bold' : ''}
                                             ${log.includes('[기술]') ? 'text-cyan-300 font-semibold' : ''}
-                                            ${log.includes('[신탁]') ? 'text-indigo-300 font-semibold' : ''}
                                         `}>
                                             {log}
                                         </span>
@@ -1340,8 +1033,7 @@
                         </div>
 
                         {/* 오른쪽 패널 */}
-                        {/* 오른쪽 패널 */}
-                        <div className="w-full xl:w-1/3 xl:border-l border-white/10 bg-slate-800/80 backdrop-blur-sm overflow-y-auto xl:overflow-y-auto h-auto xl:h-full">
+                        <div className="w-full lg:w-1/3 lg:border-l border-white/10 bg-slate-800/80 backdrop-blur-sm overflow-y-auto h-full">
                             <div className="p-4">
                                 <SectionTitle title="기술 발전표" />
                                 <div className="space-y-4">
