@@ -24,6 +24,7 @@ $amber-900: #78350f;
 // Yellow colors
 $yellow-100: #fef9c3;
 $yellow-200: #fef08a;
+$yellow-300: #fde047;
 $yellow-400: #facc15;
 $yellow-500: #eab308;
 $yellow-600: #ca8a04;
@@ -43,12 +44,15 @@ $blue-500: #3b82f6;
 $blue-600: #2563eb;
 
 // Cyan colors
+$cyan-200: #a5f3fc;
 $cyan-300: #67e8f9;
+$cyan-400: #22d3ee;
 $cyan-900: #164e63;
 
 // Violet/Purple colors
 $violet-300: #c4b5fd;
 $violet-900: #4c1d95;
+$purple-100: #f3e8ff;
 $purple-300: #d8b4fe;
 $purple-400: #c084fc;
 $purple-500: #a855f7;
@@ -68,6 +72,7 @@ $green-600: #16a34a;
 $green-900: #14532d;
 
 // Red colors
+$red-300: #fca5a5;
 $red-400: #f87171;
 $red-500: #ef4444;
 $red-600: #dc2626;
@@ -78,6 +83,8 @@ $pink-400: #f472b6;
 // Primary background
 $bg-primary: #000;
 $bg-game: $slate-900;
+$white: #ffffff;
+$black: #000000;
 
 // Text colors
 $text-primary: #fff;
@@ -118,6 +125,7 @@ $text-5xl: 3rem;
 $text-6xl: 3.75rem;
 
 // Breakpoints
+$breakpoint-sm: 390px;
 $breakpoint-md: 768px;
 $breakpoint-xl: 1280px;
 

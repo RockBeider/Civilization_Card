@@ -172,3 +172,40 @@
 .block {
     display: block;
 }
+
+.d-none-sm {
+    @include sm-up {
+        display: none;
+    }
+}
+
+// Spacing Utilities
+.p-0 {
+    padding: 0 !important;
+}
+
+// Sizing Utilities
+.w-full {
+    width: 100%;
+}
+
+.h-full {
+    height: 100%;
+}
+
+.h-auto {
+    height: auto;
+}
+
+// Visual Utilities
+.object-cover {
+    object-fit: cover;
+}
+
+.overflow-hidden {
+    overflow: hidden;
+}
+
+.rounded-full {
+    border-radius: $radius-full;
+}

@@ -5,10 +5,14 @@ import age2Img from '../assets/ages/age_2_medieval.png';
 import age3Img from '../assets/ages/age_3_industrial.png';
 import age4Img from '../assets/ages/age_4_modern.png';
 import age5Img from '../assets/ages/age_5_space.png';
+import raceHuman from '../assets/race_human.png';
+import raceNeanderthal from '../assets/race_neanderthal.png';
+import raceAtlantean from '../assets/race_atlantean.png';
+
 export const RACES = [
-    { id: 'human', name: '호모 사피엔스', desc: '균형 잡힌 능력', bonus: { food: 1.0, prod: 1.0, sci: 1.0 }, icon: 'User' },
-    { id: 'neanderthal', name: '네안데르탈인', desc: '높은 생산력, 낮은 연구', bonus: { food: 0.9, prod: 1.5, sci: 0.7 }, icon: 'Hammer' },
-    { id: 'atlantean', name: '아틀란티스인', desc: '높은 지능, 많은 식량 소모', bonus: { food: 0.7, prod: 0.8, sci: 1.5 }, icon: 'BrainCircuit' }
+    { id: 'human', name: '호모 사피엔스', desc: '균형 잡힌 능력', bonus: { food: 1.0, prod: 1.0, sci: 1.0 }, img: raceHuman },
+    { id: 'neanderthal', name: '네안데르탈인', desc: '높은 생산력, 낮은 연구', bonus: { food: 0.9, prod: 1.5, sci: 0.7 }, img: raceNeanderthal },
+    { id: 'atlantean', name: '아틀란티스인', desc: '높은 지능, 많은 식량 소모', bonus: { food: 0.7, prod: 0.8, sci: 1.5 }, img: raceAtlantean }
 ];
 
 export const DISASTERS_BY_AGE = {
@@ -20,10 +24,15 @@ export const DISASTERS_BY_AGE = {
     5: [{ name: '태양 흑점 폭발', type: 'resource', target: 'sci', ratio: 0.8, desc: '강력한 자기장으로 연구 데이터 80% 손실!' }, { name: '소행성 충돌', type: 'building_all', count: 1, desc: '소행성 파편이 떨어져 모든 종류의 건물이 1개씩 파괴되었습니다!' }]
 };
 
+// Wonder Images
+import wonderHuman from '../assets/wonder_human.png';
+import wonderNeanderthal from '../assets/wonder_neanderthal.png';
+import wonderAtlantean from '../assets/wonder_atlantean.png';
+
 export const WONDERS = {
-    human: { name: '대피라미드', desc: '위대한 유산: 모든 자원 생산량 +50%', cost: { food: 1000, prod: 1000, sci: 500 }, effect: 'all_boost' },
-    neanderthal: { name: '거인의 제단', desc: '고대의 힘: 생산력 획득량 3배', cost: { food: 500, prod: 2000, sci: 0 }, effect: 'prod_boost' },
-    atlantean: { name: '심해의 수정탑', desc: '잃어버린 기술: 과학 획득량 2배', cost: { food: 2000, prod: 500, sci: 2000 }, effect: 'sci_boost' }
+    human: { name: '대피라미드', desc: '위대한 유산: 모든 자원 생산량 +50%', cost: { food: 3000, prod: 3000, sci: 750 }, effect: 'all_boost', img: wonderHuman },
+    neanderthal: { name: '거인의 제단', desc: '고대의 힘: 생산력 획득량 2배', cost: { food: 1500, prod: 5000, sci: 250 }, effect: 'prod_boost', img: wonderNeanderthal },
+    atlantean: { name: '심해의 수정탑', desc: '잃어버린 기술: 과학 획득량 2배', cost: { food: 3000, prod: 750, sci: 3000 }, effect: 'sci_boost', img: wonderAtlantean }
 };
 
 export const AGES = [

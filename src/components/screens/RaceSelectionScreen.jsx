@@ -1,17 +1,17 @@
 import { RACES, AGES } from '@/data/constants';
-import { Scroll, Wheat, FlaskConical, Crown, Flame, FilePlus, User, Hammer, BrainCircuit } from '../ui/Icons';
-
-const getRaceIcon = (raceId) => {
-    const iconMap = { 'human': User, 'neanderthal': Hammer, 'atlantean': BrainCircuit };
-    const IconComponent = iconMap[raceId];
-    return <IconComponent size={48} />;
-};
+import { Scroll, Wheat, FlaskConical, Crown, Flame, FilePlus } from '../ui/Icons';
+import bgImage from '../../assets/race_selection_bg.png';
 
 export function RaceSelectionScreen({ onSelect, onLoad }) {
     return (
-        <div className="selection-screen">
+        <div className="selection-screen" style={{
+            backgroundImage: `linear-gradient(rgba(15, 23, 42, 0.7), rgba(15, 23, 42, 0.7)), url(${bgImage})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundAttachment: 'fixed'
+        }}>
             <div className="selection-header animate-fade-in">
-                <h1 className="selection-title">문명 시뮬레이션</h1>
+                <h1 className="selection-title">문명 <br className='d-none-sm' /> 시뮬레이션</h1>
                 <p className="selection-subtitle">당신의 문명을 선택하여 우주 시대로 이끄십시오.</p>
             </div>
 
@@ -36,7 +36,9 @@ export function RaceSelectionScreen({ onSelect, onLoad }) {
             <div className="race-grid animate-fade-in">
                 {RACES.map(race => (
                     <div key={race.id} onClick={() => onSelect(race)} className="race-card">
-                        <div className="race-icon">{getRaceIcon(race.id)}</div>
+                        <div className="race-icon-wrapper">
+                            <img src={race.img} alt={race.name} className="race-img" />
+                        </div>
                         <h2 className="race-name">{race.name}</h2>
                         <p className="race-desc">{race.desc}</p>
                         <div className="race-stats">

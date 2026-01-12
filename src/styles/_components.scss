@@ -1,114 +1,122 @@
-// ========================================
-// Component Styles
-// ========================================
-
 @use 'sass:color';
 @use 'variables' as *;
 @use 'mixins' as *;
 
-// Section title
+// Section Title
 .section-title {
-    font-size: $text-xs;
-    font-weight: 700;
-    color: $slate-500;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    margin-bottom: $spacing-4;
-    border-bottom: 1px solid $slate-700;
-    padding-bottom: $spacing-2;
-}
-
-// Resource card
-.resource-card {
-    @include flex-col;
-    background-color: $slate-800;
-    padding: $spacing-3;
-    border-radius: $radius-md;
-    border: 1px solid $slate-700;
-}
-
-.resource-label {
     display: flex;
     align-items: center;
     gap: $spacing-2;
-    margin-bottom: $spacing-1;
-    color: $slate-400;
-    font-size: $text-xs;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
+    margin-bottom: $spacing-4;
+    padding-bottom: $spacing-2;
+    border-bottom: 1px solid $border-light;
+
+    h2 {
+        font-size: $text-lg;
+        font-weight: 700;
+        color: $slate-100;
+        margin: 0;
+    }
 }
 
-.resource-value {
-    font-size: $text-xl;
-    font-weight: 700;
-    font-family: $font-mono;
-}
-
-.resource-rate {
-    font-size: $text-xs;
-    color: $slate-500;
-    font-family: $font-mono;
-}
-
-// Action buttons
+// Action Grid & Buttons
 .action-grid {
     display: grid;
-    grid-template-columns: 1fr;
-    gap: $spacing-3;
+    grid-template-columns: repeat(3, 1fr);
+    gap: $spacing-2;
     margin-bottom: $spacing-6;
 }
 
 .action-btn {
-    @include btn-base;
-    width: 100%;
-    @include shadow-lg;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: $spacing-3;
+    border-radius: $radius-lg;
+    background-color: $slate-800;
+    border: 1px solid $slate-700;
+    cursor: pointer;
+    transition: all 0.2s;
+    height: 100%;
+    min-height: 80px;
+
+    &:hover {
+        transform: translateY(-2px);
+        background-color: $slate-700;
+        border-color: $slate-500;
+    }
+
+    &:active {
+        transform: translateY(0);
+    }
 
     .btn-icon {
-        background-color: rgba(255, 255, 255, 0.2);
-        padding: $spacing-2;
-        border-radius: $radius-full;
+        margin-bottom: $spacing-2;
+        color: $slate-300;
     }
 
     .btn-content {
-        text-align: left;
+        text-align: center;
     }
 
     .btn-label {
-        font-weight: 700;
-        font-size: $text-lg;
+        font-size: $text-xs;
+        font-weight: 600;
+        color: $slate-200;
     }
 
     .btn-desc {
+        font-size: 10px;
+        color: $slate-500;
+        margin-top: $spacing-1;
+    }
+
+    &.btn-food {
+        .btn-icon { color: $yellow-400; }
+        &:hover { border-color: $yellow-500; }
+    }
+
+    &.btn-prod {
+        .btn-icon { color: $orange-400; }
+        &:hover { border-color: $orange-500; }
+    }
+
+    &.btn-sci {
+        .btn-icon { color: $blue-400; }
+        &:hover { border-color: $blue-500; }
+    }
+}
+
+// Resource Card
+.resource-card {
+    display: flex;
+    align-items: center;
+    gap: $spacing-3;
+
+    .resource-label {
         font-size: $text-xs;
-        opacity: 0.7;
+        color: $slate-400;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: $spacing-2;
+    }
+
+    .resource-value {
+        font-size: $text-lg;
+        font-weight: 700;
+        color: $text-primary;
+        font-family: $font-mono;
+    }
+
+    .resource-rate {
+        font-size: $text-xs;
+        color: $slate-500;
     }
 }
 
-.btn-food {
-    background-color: $yellow-600;
-
-    &:hover {
-        background-color: color.adjust($yellow-600, $lightness: -5%);
-    }
-}
-
-.btn-prod {
-    background-color: $orange-600;
-
-    &:hover {
-        background-color: color.adjust($orange-600, $lightness: -5%);
-    }
-}
-
-.btn-sci {
-    background-color: $blue-600;
-
-    &:hover {
-        background-color: color.adjust($blue-600, $lightness: -5%);
-    }
-}
-
-// Building cards
+// Building List & Cards
 .building-list {
     display: flex;
     flex-direction: column;
@@ -117,344 +125,385 @@
 }
 
 .building-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     padding: $spacing-3;
     border-radius: $radius-lg;
-    border: 1px solid $border-medium;
-    transition: all 0.2s;
+    background-color: $slate-800;
+    border: 1px solid $slate-700;
     cursor: pointer;
-    @include flex-between;
+    transition: all 0.2s;
+
+    &:hover {
+        background-color: $slate-700;
+    }
 
     &.affordable {
-        background-color: $slate-700;
-
-        &:hover {
-            background-color: $slate-600;
-        }
+        border-left: 3px solid $green-500;
     }
 
     &.unaffordable {
-        background-color: $slate-800;
-        opacity: 0.5;
-        cursor: not-allowed;
+        opacity: 0.7;
+        border-left: 3px solid $red-500;
     }
-}
 
-.building-info {
+    .building-info {
+        display: flex;
+        flex-direction: column;
+        gap: $spacing-1;
+    }
+
     .building-name {
         font-weight: 700;
         font-size: $text-sm;
         color: $slate-200;
-        display: flex;
-        align-items: center;
-        gap: $spacing-2;
     }
 
     .building-cost {
         font-size: $text-xs;
         color: $slate-400;
-        margin-top: $spacing-1;
-    }
-}
 
-.building-output {
-    font-size: $text-xs;
-    color: $slate-500;
-    text-align: right;
+        span { margin-right: $spacing-2; }
+        .cost-food { color: $yellow-400; }
+        .cost-prod { color: $orange-400; }
+        .cost-sci { color: $blue-400; }
+    }
+
+    .building-output {
+        text-align: right;
+    }
 
     .output-value {
-        font-family: $font-mono;
-    }
-
-    .output-bonus {
+        font-weight: 700;
         color: $green-400;
-        margin-left: $spacing-1;
-        font-size: 11px;
     }
 
     .output-label {
         font-size: 10px;
-        opacity: 0.8;
+        color: $slate-500;
+    }
+
+    .output-bonus {
+        font-size: $text-xs;
+        color: $blue-400;
+        margin-left: $spacing-1;
     }
 }
 
-.cost-food {
-    color: $yellow-400;
-}
-
-.cost-prod {
-    color: $orange-400;
-}
-
-.cost-sci {
-    color: $blue-400;
-}
-
-// Upgrade button
+// Upgrade Button
 .upgrade-btn {
     width: 100%;
-    background-color: $slate-700;
-    border: 1px solid $slate-600;
-    padding: $spacing-4;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: $spacing-3;
+    background: linear-gradient(135deg, $purple-900, $slate-900);
+    border: 1px solid $purple-500;
     border-radius: $radius-lg;
-    @include flex-between;
-    margin-bottom: $spacing-4;
-    transition: all 0.2s;
     cursor: pointer;
+    margin-bottom: $spacing-6;
+    transition: all 0.3s;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 
     &:hover {
-        background-color: $slate-600;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba($purple-500, 0.3);
+        border-color: color.adjust($purple-500, $lightness: 10%);
     }
 
     .upgrade-icon {
-        background-color: rgba($purple-900, 0.5);
         padding: $spacing-2;
+        background-color: rgba($purple-500, 0.2);
         border-radius: $radius-md;
-        color: $purple-400;
+        color: $purple-300;
     }
 
     .upgrade-info {
         text-align: left;
+        flex: 1;
+        padding-left: $spacing-2;
+    }
 
-        .upgrade-title {
-            font-weight: 700;
-            color: $slate-200;
-        }
+    .upgrade-title {
+        font-weight: 700;
+        color: $purple-100;
+        font-size: $text-sm;
+    }
 
-        .upgrade-desc {
-            font-size: $text-xs;
-            color: $slate-400;
-        }
+    .upgrade-desc {
+        font-size: $text-xs;
+        color: $purple-300;
     }
 
     .upgrade-arrow {
-        color: $slate-500;
+        color: $purple-400;
     }
 }
 
-// Wonder section
-.wonder-complete {
-    padding: $spacing-4;
-    border-radius: $radius-lg;
-    background-color: rgba($amber-900, 0.2);
-    border: 1px solid rgba($yellow-500, 0.5);
-    text-align: center;
-
-    .wonder-icon {
-        color: $yellow-500;
-        margin-bottom: $spacing-2;
-    }
-
-    .wonder-name {
-        font-weight: 700;
-        color: $yellow-500;
-    }
-
-    .wonder-effect {
-        font-size: $text-xs;
-        color: rgba($yellow-200, 0.7);
-        margin-top: $spacing-1;
-    }
-}
-
-.wonder-card {
-    padding: $spacing-4;
-    border-radius: $radius-lg;
-    border: 1px solid rgba($yellow-600, 0.3);
-    transition: all 0.2s;
-    cursor: pointer;
-    position: relative;
-    overflow: hidden;
-
-    &.affordable {
-        background-color: rgba($amber-900, 0.3);
-
-        &:hover {
-            background-color: rgba($amber-900, 0.5);
-            border-color: $yellow-500;
-        }
-    }
-
-    &.unaffordable {
-        background-color: $slate-800;
-        opacity: 0.7;
-        cursor: not-allowed;
-    }
-}
-
-.wonder-content {
-    display: flex;
-    align-items: flex-start;
-    gap: $spacing-3;
-    position: relative;
-    z-index: 10;
-
-    .wonder-icon-wrapper {
-        padding: $spacing-2;
-        background-color: rgba($amber-900, 0.8);
-        border-radius: $radius-full;
-        border: 1px solid $yellow-700;
-        color: $yellow-500;
-    }
-
-    .wonder-details {
-        .wonder-title {
-            font-weight: 700;
-            color: $yellow-400;
-        }
-
-        .wonder-desc {
-            font-size: $text-xs;
-            color: $slate-300;
-            margin-bottom: $spacing-2;
-        }
-
-        .wonder-costs {
-            font-size: $text-xs;
-            font-family: $font-mono;
-            display: flex;
-            flex-direction: column;
-            gap: $spacing-1;
-        }
-    }
-}
-
-// Tech tree
+// Tech Tree List & Cards
 .tech-list {
     display: flex;
     flex-direction: column;
-    gap: $spacing-4;
+    gap: $spacing-3;
 }
 
 .tech-card {
     position: relative;
     padding: $spacing-4;
     border-radius: $radius-lg;
-    border: 1px solid;
-    transition: all 0.2s;
+    background-color: $slate-800;
+    border: 1px solid $slate-700;
+    cursor: pointer;
+    overflow: hidden;
+    transition: all 0.3s;
+    min-height: 100px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    // Background image support
     background-size: cover;
     background-position: center;
-    background-repeat: no-repeat;
-    overflow: hidden; // Ensure overlay stays inside
 
-    // Default background if no image
-    background-color: $slate-800;
+    .tech-overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(to right, rgba($slate-900, 0.95), rgba($slate-900, 0.7));
+        z-index: 1;
+        transition: background 0.3s ease;
+    }
+
+    .tech-content-wrapper {
+        position: relative;
+        z-index: 2;
+    }
 
     &.researched {
-        background-color: rgba($green-900, 0.2); // Fallback
-        border-color: rgba($green-500, 0.3);
-        opacity: 0.7;
+        border-color: $green-500;
+        background-color: rgba($green-900, 0.2);
 
-        // Darken accomplished techs more to show they are done
         .tech-overlay {
-            background: linear-gradient(to bottom, rgba(#052e16, 0.8), rgba(#14532d, 0.9));
+            background: linear-gradient(to right, rgba($slate-900, 0.7), rgba($slate-900, 0.2));
         }
+
+        .tech-name { color: $green-400; }
+        .tech-icon { color: $green-400; }
     }
 
     &.available {
-        cursor: pointer;
+        &:hover {
+            transform: translateX(4px);
+            border-color: $blue-500;
 
-        &.affordable {
-            background-color: rgba($indigo-900, 0.4);
-            border-color: $indigo-500;
-
-            &:hover {
-                transform: translateY(-2px);
-                @include shadow-lg;
-                border-color: #818cf8; // indigo-400
-
-                .tech-overlay {
-                    background: linear-gradient(to bottom, rgba($slate-900, 0.6), rgba($slate-900, 0.7));
-                }
+            .tech-overlay {
+                background: linear-gradient(to right, rgba($slate-900, 0.8), rgba($slate-900, 0.3));
             }
-        }
-
-        &.unaffordable {
-            background-color: $slate-800;
-            border-color: $slate-600;
-            opacity: 0.8;
         }
     }
 
     &.locked {
-        opacity: 0.5;
+        opacity: 0.6;
         cursor: not-allowed;
-        background-color: $slate-900;
-        border-color: $slate-700;
-
-        &:hover {
-            transform: none;
-            border-color: $slate-700;
-        }
-
-        .tech-overlay {
-            background: rgba(#020617, 0.85); // Very dark for locked
-        }
+        filter: grayscale(0.8);
     }
-}
-
-.tech-overlay {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(to bottom, rgba($slate-900, 0.7), rgba($slate-900, 0.8));
-    transition: background 0.3s;
-    z-index: 1;
-}
-
-.tech-content-wrapper {
-    position: relative;
-    z-index: 2;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
-}
-
-.tech-header {
-    @include flex-between;
-    margin-bottom: $spacing-2;
-
-    .tech-name {
-        font-weight: 700;
-        font-size: $text-lg;
-
-        &.researched {
-            color: $green-400;
-        }
-
-        &.available {
-            color: #c7d2fe; // indigo-200
-        }
-    }
-
-    .tech-icon {
-        &.researched {
-            color: $green-500;
-        }
-
-        &.available {
-            color: $blue-400;
-        }
-    }
-}
-
-.tech-desc {
-    font-size: $text-xs;
-    color: $slate-400;
-    margin-bottom: $spacing-2;
-}
-
-.tech-cost {
-    font-size: $text-xs;
-    font-family: $font-mono;
 
     &.affordable {
-        color: $blue-300;
+        border-left: 3px solid $blue-500;
     }
 
     &.unaffordable {
+        border-left: 3px solid $red-500;
+    }
+
+    .tech-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: $spacing-2;
+    }
+
+    .tech-name {
+        font-weight: 700;
+        font-size: $text-base;
+        color: $slate-200;
+    }
+
+    .tech-desc {
+        font-size: $text-xs;
+        color: $slate-400;
+        margin-bottom: $spacing-2;
+    }
+
+    .tech-req {
+        font-size: $text-xs;
         color: $red-400;
+        font-weight: 600;
+    }
+
+    .tech-cost {
+        font-size: $text-xs;
+        font-weight: 600;
+        margin-top: auto;
+
+        &.affordable { color: $blue-400; }
+        &.unaffordable { color: $red-400; }
+    }
+
+    .tech-complete-msg {
+        text-align: center;
+        padding: $spacing-4;
+        color: $green-400;
+        font-weight: 700;
+        background-color: rgba($green-900, 0.3);
+        border-radius: $radius-lg;
     }
 }
 
-.tech-complete-msg {
-    text-align: center;
-    padding: $spacing-4;
-    color: $slate-500;
+.wonder-card {
+    position: relative;
+    width: 100%;
+    height: 120px;
+    border-radius: $radius-lg;
+    overflow: hidden;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease;
+    border: 1px solid transparent;
+
+    &.affordable {
+        border-color: $yellow-500;
+        &:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 12px rgba($yellow-500, 0.3);
+            border-color: color.adjust($yellow-500, $lightness: 10%);
+
+            .wonder-bg {
+                transform: scale(1.05);
+            }
+        }
+    }
+
+    &.unaffordable {
+        opacity: 0.8;
+        filter: grayscale(0.5);
+        &:hover {
+             border-color: $red-500;
+        }
+    }
+
+    &.completed {
+        border-color: $yellow-500;
+        cursor: default;
+        
+        &.wonder-glow {
+            box-shadow: 0 0 15px rgba($yellow-500, 0.4);
+            animation: pulse-glow 3s infinite;
+        }
+
+        .wonder-overlay {
+             background: linear-gradient(to right, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.5) 100%);
+        }
+
+        .wonder-title {
+            color: $yellow-100;
+        }
+    }
+
+    .wonder-bg {
+        position: absolute;
+        inset: 0;
+        background-size: cover;
+        background-position: center;
+        transition: transform 0.5s ease;
+        z-index: 1;
+    }
+
+    .wonder-overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(to right, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.6) 60%, rgba(0,0,0,0.3) 100%);
+        z-index: 2;
+    }
+
+    .wonder-content {
+        position: relative;
+        z-index: 3;
+        padding: $spacing-3 $spacing-4;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    .wonder-header {
+        @include flex-between;
+        margin-bottom: $spacing-1;
+    }
+
+    .wonder-title {
+        font-weight: 800;
+        font-size: $text-lg;
+        color: $white;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+    }
+
+    .wonder-icon {
+        color: $yellow-400;
+        filter: drop-shadow(0 0 5px rgba($yellow-400, 0.5));
+    }
+
+    .wonder-desc {
+        font-size: $text-xs;
+        color: $slate-300;
+        margin-bottom: auto; // push content down
+        line-height: 1.4;
+    }
+    
+    .wonder-status-badge {
+        display: inline-block;
+        background-color: $yellow-500;
+        color: $black;
+        font-weight: 700;
+        font-size: 10px;
+        padding: 2px 6px;
+        border-radius: $radius-sm;
+        margin-bottom: $spacing-1;
+    }
+    
+    .wonder-effect-tag {
+        font-size: $text-xs;
+        color: $yellow-300;
+        font-weight: 600;
+        margin-top: $spacing-2;
+        padding-top: $spacing-2;
+        border-top: 1px solid rgba($white, 0.1);
+    }
+
+    .wonder-costs {
+        display: flex;
+        gap: $spacing-3;
+        font-size: $text-xs;
+        margin-top: $spacing-2;
+        padding-top: $spacing-2;
+        border-top: 1px solid rgba($white, 0.1);
+
+        .cost-item {
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: $spacing-1;
+            
+            &.text-yellow { color: $yellow-400; }
+            &.text-orange { color: $orange-400; }
+            &.text-blue { color: $blue-400; }
+            &.text-red { color: $red-400; }
+        }
+    }
+}
+
+@keyframes pulse-glow {
+    0% { box-shadow: 0 0 10px rgba($yellow-500, 0.3); }
+    50% { box-shadow: 0 0 20px rgba($yellow-500, 0.5); border-color: $yellow-400; }
+    100% { box-shadow: 0 0 10px rgba($yellow-500, 0.3); }
 }

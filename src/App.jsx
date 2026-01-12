@@ -3,7 +3,8 @@ import {
     User, Hammer, BrainCircuit, Pickaxe, Scroll, Zap, Rocket,
     FlaskConical, Wheat, Shield, Star, Globe, Volume2, VolumeX,
     Crown, Save, RotateCcw, Trash, Home, X, FilePlus, Flame,
-    Maximize, Minimize, ArrowUp, Wrench
+    Maximize, Minimize, ArrowUp, Wrench, Play, Pause, FastForward,
+    ChevronDown, Check, Diamond
 } from './components/ui/Icons';
 import { ResourceCard, ActionButton, SectionTitle } from './components/ui/BasicComponents';
 import { SaveLoadModal } from './components/ui/SaveLoadModal';
@@ -35,6 +36,8 @@ function App() {
     const [modalMode, setModalMode] = useState('save');
     const [isUpgradeModalOpen, setIsUpgradeModalOpen] = useState(false);
     const [isFullScreen, setIsFullScreen] = useState(false);
+    const [gameSpeed, setGameSpeed] = useState(1);
+    const [isSpeedMenuOpen, setIsSpeedMenuOpen] = useState(false);
 
     const refreshSlots = () => {
         const loaded = {};
@@ -115,6 +118,10 @@ function App() {
 
     useEffect(() => {
         if (gameState !== 'playing') return;
+        if (gameSpeed === 0) return; // Paused
+
+        const intervalTime = 1000 / gameSpeed;
+
         const interval = setInterval(() => {
             setResources(prev => {
                 const raceBonus = selectedRace.bonus;
@@ -134,9 +141,9 @@ function App() {
                 triggerDisaster();
             }
 
-        }, 1000);
+        }, intervalTime);
         return () => clearInterval(interval);
-    }, [gameState, buildings, buildingLevels, selectedRace, multipliers, triggerDisaster]);
+    }, [gameState, buildings, buildingLevels, selectedRace, multipliers, triggerDisaster, gameSpeed]);
 
     useEffect(() => {
         if (gameState !== 'playing' || !currentSlot) return;
@@ -280,7 +287,7 @@ function App() {
             // Check for upgrade unlock
             if (type === 'lab' && newCount === 10) {
                 setTimeout(() => {
-                    addLog(">>> 시설 기술 강화가 해금되었습니다! <<<");
+                    addLog("시설 기술 강화가 해금되었습니다!");
                     playSound('age'); // Use a distinct sound if available, 'age' is impactful
                 }, 500); // Slight delay for emphasis
             }
@@ -324,7 +331,7 @@ function App() {
 
             setMultipliers(prev => {
                 if (wonder.effect === 'all_boost') return { food: prev.food * 1.5, prod: prev.prod * 1.5, sci: prev.sci * 1.5 };
-                if (wonder.effect === 'prod_boost') return { ...prev, prod: prev.prod * 3.0 };
+                if (wonder.effect === 'prod_boost') return { ...prev, prod: prev.prod * 2.0 };
                 if (wonder.effect === 'sci_boost') return { ...prev, sci: prev.sci * 2.0 };
                 return prev;
             });
@@ -354,7 +361,7 @@ function App() {
                     );
                     if (nextAgeIdx !== -1) {
                         setCurrentAge(nextAgeIdx);
-                        addLog(`>>> ${AGES[nextAgeIdx].name}로 진입했습니다! <<<`);
+                        addLog(`${AGES[nextAgeIdx].name}로 진입했습니다!`);
                         playSound('age');
                     } else {
                         playSound('research');
@@ -423,7 +430,41 @@ function App() {
 
                 {/* 컨트롤 버튼 그룹 */}
                 <div className="control-buttons">
-                    <button onClick={toggleFullScreen} title={isFullScreen ? "전체화면 종료" : "전체화면"} className="control-btn">
+                    <div className="speed-dropdown-container">
+                        <button
+                            onClick={() => setIsSpeedMenuOpen(!isSpeedMenuOpen)}
+                            className={`control-btn speed-toggle ${isSpeedMenuOpen ? 'active' : ''}`}
+                            title="게임 속도 조절"
+                        >
+                            {gameSpeed === 0 ? <Pause size={18} /> : <span>{gameSpeed}x</span>}
+                            <ChevronDown size={14} className={`chevron ${isSpeedMenuOpen ? 'rotate' : ''}`} />
+                        </button>
+
+                        {isSpeedMenuOpen && (
+                            <div className="speed-menu animate-fade-in">
+                                <div onClick={() => { setGameSpeed(0); setIsSpeedMenuOpen(false); }} className={`speed-item ${gameSpeed === 0 ? 'selected' : ''}`}>
+                                    <Pause size={14} className="mr-2" /> 정지
+                                    {gameSpeed === 0 && <Check size={14} className="check-icon" />}
+                                </div>
+                                <div onClick={() => { setGameSpeed(1); setIsSpeedMenuOpen(false); }} className={`speed-item ${gameSpeed === 1 ? 'selected' : ''}`}>
+                                    <span>1x</span> 보통
+                                    {gameSpeed === 1 && <Check size={14} className="check-icon" />}
+                                </div>
+                                <div onClick={() => { setGameSpeed(2); setIsSpeedMenuOpen(false); }} className={`speed-item ${gameSpeed === 2 ? 'selected' : ''}`}>
+                                    <span>2x</span> 빠름
+                                    {gameSpeed === 2 && <Check size={14} className="check-icon" />}
+                                </div>
+                                <div onClick={() => { setGameSpeed(5); setIsSpeedMenuOpen(false); }} className={`speed-item ${gameSpeed === 5 ? 'selected' : ''}`}>
+                                    <span>5x</span> 매우 빠름
+                                    {gameSpeed === 5 && <Check size={14} className="check-icon" />}
+                                </div>
+                            </div>
+                        )}
+                    </div>
+
+                    <div className="divider"></div>
+
+                    <button onClick={toggleFullScreen} title={isFullScreen ? "전체화면 종료" : "전체화면"} className="control-btn hidden">
                         {isFullScreen ? <Minimize size={18} /> : <Maximize size={18} />}
                     </button>
                     <button onClick={goHome} title="메인으로" className="control-btn">
@@ -440,8 +481,8 @@ function App() {
                 <div className="header-content">
                     <div className="header-top">
                         <div className="header-info">
-                            <div className={`age-icon ${AGES[currentAge].color}`}>
-                                <Globe size={32} />
+                            <div className={`age-icon ${AGES[currentAge].color} overflow-hidden p-0`}>
+                                <img src={selectedRace.img} alt={selectedRace.name} className="block w-full h-auto object-cover" />
                             </div>
                             <div>
                                 <h1 className={`age-title ${AGES[currentAge].color}`}>{AGES[currentAge].name}</h1>
@@ -545,26 +586,36 @@ function App() {
 
                         <SectionTitle title="불가사의" />
                         {hasWonder ? (
-                            <div className="wonder-complete wonder-glow">
-                                <Crown size={32} className="wonder-icon" />
-                                <div className="wonder-name">{WONDERS[selectedRace.id].name} 건설됨</div>
-                                <div className="wonder-effect">영구 효과 적용 중</div>
+                            <div className="wonder-card completed wonder-glow">
+                                <div className="wonder-bg" style={{ backgroundImage: `url(${WONDERS[selectedRace.id].img})` }}></div>
+                                <div className="wonder-overlay"></div>
+                                <div className="wonder-content">
+                                    <div className="wonder-header">
+                                        <div className="wonder-title">{WONDERS[selectedRace.id].name}</div>
+                                        <Crown size={20} className="wonder-icon" />
+                                    </div>
+                                    <div className="wonder-desc">
+                                        <div className="wonder-status-badge">건설 완료</div>
+                                        <div>{WONDERS[selectedRace.id].desc}</div>
+                                    </div>
+                                    <div className="wonder-effect-tag">✨ 영구 효과 적용 중</div>
+                                </div>
                             </div>
                         ) : (
                             <div onClick={buildWonder}
                                 className={`wonder-card ${resources.food >= WONDERS[selectedRace.id].cost.food && resources.prod >= WONDERS[selectedRace.id].cost.prod && resources.sci >= WONDERS[selectedRace.id].cost.sci ? 'affordable' : 'unaffordable'}`}>
+                                <div className="wonder-bg" style={{ backgroundImage: `url(${WONDERS[selectedRace.id].img})` }}></div>
+                                <div className="wonder-overlay"></div>
                                 <div className="wonder-content">
-                                    <div className="wonder-icon-wrapper">
-                                        <Crown size={24} />
-                                    </div>
-                                    <div className="wonder-details">
+                                    <div className="wonder-header">
                                         <div className="wonder-title">{WONDERS[selectedRace.id].name}</div>
-                                        <div className="wonder-desc">{WONDERS[selectedRace.id].desc}</div>
-                                        <div className="wonder-costs">
-                                            {WONDERS[selectedRace.id].cost.food > 0 && <div className={resources.food >= WONDERS[selectedRace.id].cost.food ? 'text-yellow' : 'text-red'}>식량: {WONDERS[selectedRace.id].cost.food.toLocaleString()}</div>}
-                                            {WONDERS[selectedRace.id].cost.prod > 0 && <div className={resources.prod >= WONDERS[selectedRace.id].cost.prod ? 'text-orange' : 'text-red'}>생산: {WONDERS[selectedRace.id].cost.prod.toLocaleString()}</div>}
-                                            {WONDERS[selectedRace.id].cost.sci > 0 && <div className={resources.sci >= WONDERS[selectedRace.id].cost.sci ? 'text-blue' : 'text-red'}>과학: {WONDERS[selectedRace.id].cost.sci.toLocaleString()}</div>}
-                                        </div>
+                                        <Crown size={20} className="wonder-icon" />
+                                    </div>
+                                    <div className="wonder-desc">{WONDERS[selectedRace.id].desc}</div>
+                                    <div className="wonder-costs">
+                                        {WONDERS[selectedRace.id].cost.food > 0 && <div className={resources.food >= WONDERS[selectedRace.id].cost.food ? 'cost-item text-yellow' : 'cost-item text-red'}>🌾 {WONDERS[selectedRace.id].cost.food.toLocaleString()}</div>}
+                                        {WONDERS[selectedRace.id].cost.prod > 0 && <div className={resources.prod >= WONDERS[selectedRace.id].cost.prod ? 'cost-item text-orange' : 'cost-item text-red'}>⚒️ {WONDERS[selectedRace.id].cost.prod.toLocaleString()}</div>}
+                                        {WONDERS[selectedRace.id].cost.sci > 0 && <div className={resources.sci >= WONDERS[selectedRace.id].cost.sci ? 'cost-item text-blue' : 'cost-item text-red'}>🧪 {WONDERS[selectedRace.id].cost.sci.toLocaleString()}</div>}
                                     </div>
                                 </div>
                             </div>
@@ -580,8 +631,8 @@ function App() {
                     </div>
                     <div className="log-content">
                         {logs.map((log, i) => (
-                            <div key={i} className={`log-entry animate-fade-in ${log.includes('>>>') ? 'log-age' : ''}`}>
-                                {!log.includes('>>>') && <span className="log-number">[{logs.length - i}]</span>}
+                            <div key={i} className={`log-entry animate-fade-in ${log.includes('시대로') ? 'log-age' : ''}`}>
+                                {!log.includes('시대로') && <span className="log-number">[{logs.length - i}]</span>}
                                 <span className={`${log.includes('[재해]') ? 'log-disaster' : ''} ${log.includes('[기술]') ? 'log-tech' : ''}`}>
                                     {log}
                                 </span>
