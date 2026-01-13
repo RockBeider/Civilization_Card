@@ -5,6 +5,13 @@ import age2Img from '../assets/ages/age_2_medieval.png';
 import age3Img from '../assets/ages/age_3_industrial.png';
 import age4Img from '../assets/ages/age_4_modern.png';
 import age5Img from '../assets/ages/age_5_space.png';
+// 시대별 바닥 배경 이미지
+import groundStone from '../assets/grounds/ground_stone.png';
+import groundAncient from '../assets/grounds/ground_ancient.png';
+import groundMedieval from '../assets/grounds/ground_medieval.png';
+import groundIndustrial from '../assets/grounds/ground_industrial.png';
+import groundModern from '../assets/grounds/ground_modern.png';
+import groundSpace from '../assets/grounds/ground_space.png';
 import raceHuman from '../assets/race_human.png';
 import raceNeanderthal from '../assets/race_neanderthal.png';
 import raceAtlantean from '../assets/race_atlantean.png';
@@ -41,12 +48,12 @@ export const RACES = [
 ];
 
 export const AGES = [
-    { id: 0, name: '원시 시대', color: 'age-stone', img: age0Img, cardPool: CARD_POOLS[0] },
-    { id: 1, name: '고대 시대', color: 'age-amber', img: age1Img, cardPool: CARD_POOLS[1] },
-    { id: 2, name: '중세 시대', color: 'age-slate', img: age2Img, cardPool: [] },
-    { id: 3, name: '산업 시대', color: 'age-orange', img: age3Img, cardPool: [] },
-    { id: 4, name: '현대 시대', color: 'age-cyan', img: age4Img, cardPool: [] },
-    { id: 5, name: '우주 시대', color: 'age-violet', img: age5Img, cardPool: [] }
+    { id: 0, name: '원시 시대', color: 'age-stone', img: age0Img, groundImg: groundStone, cardPool: CARD_POOLS[0] },
+    { id: 1, name: '고대 시대', color: 'age-amber', img: age1Img, groundImg: groundAncient, cardPool: CARD_POOLS[1] },
+    { id: 2, name: '중세 시대', color: 'age-slate', img: age2Img, groundImg: groundMedieval, cardPool: [] },
+    { id: 3, name: '산업 시대', color: 'age-orange', img: age3Img, groundImg: groundIndustrial, cardPool: [] },
+    { id: 4, name: '현대 시대', color: 'age-cyan', img: age4Img, groundImg: groundModern, cardPool: [] },
+    { id: 5, name: '우주 시대', color: 'age-violet', img: age5Img, groundImg: groundSpace, cardPool: [] }
 ];
 
 export const SLOT_PREFIX = 'civ_deck_save_slot_';

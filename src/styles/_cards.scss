@@ -33,9 +33,17 @@
   }
 
   // Types
-  &.card-type-action { border-top: 4px solid #4facfe; }
-  &.card-type-structure { border-top: 4px solid #fa709a; }
-  &.card-type-crisis { border-top: 4px solid #ff0844; }
+  &.card-type-action {
+    border-top: 4px solid #4facfe;
+  }
+
+  &.card-type-structure {
+    border-top: 4px solid #fa709a;
+  }
+
+  &.card-type-crisis {
+    border-top: 4px solid #ff0844;
+  }
 }
 
 .card-header {
@@ -51,7 +59,7 @@
   display: flex;
   align-items: center;
   gap: 2px;
-  background: rgba(0,0,0,0.5);
+  background: rgba(0, 0, 0, 0.5);
   padding: 2px 4px;
   border-radius: 4px;
   font-size: 0.8rem;
@@ -126,8 +134,10 @@
 .field-container {
   margin: 20px;
   padding: 10px;
-  background: rgba(0, 0, 0, 0.2);
   border-radius: 8px;
+  min-height: 200px;
+  position: relative;
+  overflow: hidden;
 }
 
 .field-grid {
@@ -141,7 +151,7 @@
     font-size: 0.8rem;
 
     .card-image-placeholder {
-        flex: 0.6;
+      flex: 0.6;
     }
   }
 }

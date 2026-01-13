@@ -55,15 +55,14 @@ function App() {
                             <p className="civ-info">{selectedRace?.name} | <Hourglass size={14} /> Turn {turn}</p>
                         </div>
 
-
-                        <div className="control-buttons" style={{ position: 'absolute', top: '20px', right: '20px', display: 'flex', gap: '10px' }}>
-                            <button onClick={quitGame} title="메인으로" className="control-btn" style={{ background: 'rgba(0,0,0,0.5)', border: '1px solid #555', borderRadius: '50%', padding: '8px', color: 'white', cursor: 'pointer' }}>
+                        <div className="control-buttons">
+                            <button onClick={quitGame} title="메인으로" className="control-btn">
                                 <Home size={18} />
                             </button>
-                            <button onClick={() => alert("저장 기능은 현재 개발 중입니다.")} title="저장하기" className="control-btn" style={{ background: 'rgba(0,0,0,0.5)', border: '1px solid #555', borderRadius: '50%', padding: '8px', color: 'white', cursor: 'pointer' }}>
+                            <button onClick={() => alert("저장 기능은 현재 개발 중입니다.")} title="저장하기" className="control-btn">
                                 <Save size={18} />
                             </button>
-                            <button onClick={toggleMute} title="음소거" className="control-btn" style={{ background: 'rgba(0,0,0,0.5)', border: '1px solid #555', borderRadius: '50%', padding: '8px', color: 'white', cursor: 'pointer' }}>
+                            <button onClick={toggleMute} title="음소거" className="control-btn">
                                 {isMuted ? <VolumeX size={18} /> : <Volume2 size={18} />}
                             </button>
                         </div>
@@ -77,38 +76,38 @@ function App() {
                 </div>
             </header>
 
-            <div className="main-content">
+            <div className="main-content" style={{ backgroundImage: `url(${AGES[currentAge].groundImg})` }}>
+                {/* 배경 오버레이 */}
+                <div className="main-content-overlay" />
                 {/* Main Play Area */}
-                <div className="panel-center" style={{ flex: 3, display: 'flex', flexDirection: 'column' }}>
-                    <div className="field-area" style={{ flex: 1 }}>
+                <div className="panel-center">
+                    <div className="field-area">
                         <FieldView field={field} />
                     </div>
 
-                    <div className="hand-area" style={{ flex: 1, position: 'relative' }}>
+                    <div className="hand-area">
                         <HandView hand={hand} onPlayCard={playCard} resources={resources} />
-                    </div>
-
-                    <div className="controls-area" style={{ position: 'absolute', right: '350px', bottom: '20px', zIndex: 100 }}>
-                        <button className="btn-primary"
-                            style={{ padding: '15px 30px', fontSize: '1.2rem', backgroundColor: '#3b82f6', border: 'none', borderRadius: '8px', color: 'white', cursor: 'pointer' }}
-                            onClick={endTurn}>
-                            턴 종료
-                        </button>
                     </div>
                 </div>
 
                 {/* Right Information Panel */}
-                <div className="panel-right" style={{ flex: 1, minWidth: '300px' }}>
-                    <div className="panel-inner" style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+                <div className="panel-right">
+                    <div className="panel-inner">
                         <div className="log-header">
                             <h3>로그</h3>
                         </div>
-                        <div className="log-content" style={{ flex: 1, overflowY: 'auto' }}>
+                        <div className="log-content">
                             {logs.map((log, i) => (
-                                <div key={i} className="log-entry" style={{ padding: '5px', borderBottom: '1px solid #333', fontSize: '0.9rem' }}>
+                                <div key={i} className="log-entry">
                                     {log}
                                 </div>
                             ))}
+                        </div>
+                        {/* 턴 종료 버튼 */}
+                        <div className="turn-end-container">
+                            <button className="btn-turn-end" onClick={endTurn}>
+                                턴 종료
+                            </button>
                         </div>
                     </div>
                 </div>
