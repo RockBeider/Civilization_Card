@@ -203,6 +203,42 @@ export const useGameLoop = () => {
         setDiscard([]);
     };
 
+    // --- Dev Cheats ---
+    useEffect(() => {
+        window.cheat = {
+            gainResources: (amount = 100) => {
+                setResources(prev => ({
+                    food: prev.food + amount,
+                    prod: prev.prod + amount,
+                    sci: prev.sci + amount
+                }));
+                addLog(`[Cheat] 자원 +${amount}`);
+            },
+            nextTurn: () => {
+                addLog("[Cheat] 턴 강제 종료");
+                endTurn();
+            },
+            setAge: (ageIndex) => {
+                if (ageIndex >= 0 && ageIndex < AGES.length) {
+                    setCurrentAge(ageIndex);
+                    addLog(`[Cheat] 시대 변경: ${AGES[ageIndex]?.name}`);
+                } else {
+                    console.warn("Invalid Age Index");
+                }
+            },
+            win: () => {
+                addLog("[Cheat] 승리!");
+                setGameState('victory');
+            },
+            // Check state
+            logState: () => {
+                console.log({
+                    gameState, resources, currentAge, turn, deck, hand, field, discard
+                });
+            }
+        };
+    }); // Update on every render to keep closures fresh
+
     return {
         gameState,
         selectedRace,

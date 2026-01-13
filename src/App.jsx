@@ -93,9 +93,9 @@ function App() {
                 {/* Right Information Panel */}
                 <div className="panel-right">
                     <div className="panel-inner">
-                        <div className="log-header">
+                        {/* <div className="log-header">
                             <h3>로그</h3>
-                        </div>
+                        </div> */}
                         <div className="log-content">
                             {logs.map((log, i) => (
                                 <div key={i} className="log-entry">
