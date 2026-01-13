@@ -49,6 +49,9 @@
 }
 
 .header-content {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-4;
     position: relative;
     z-index: 10;
 }
@@ -66,8 +69,8 @@
 }
 
 .age-icon {
+    overflow: hidden;
     max-width: 64px;
-    padding: $spacing-3;
     border-radius: $radius-full;
     @include glass;
     border: 1px solid $border-light;

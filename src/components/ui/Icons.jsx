@@ -3,7 +3,7 @@ import {
     FlaskConical, Wheat, Shield, Star, Globe, Volume2, VolumeX,
     Crown, Save, RotateCcw, Trash, Home, X, FilePlus, Flame,
     Maximize, Minimize, ArrowUp, Wrench, Play, Pause, FastForward,
-    ChevronDown, Check, Diamond
+    ChevronDown, Check, Diamond, Hourglass, Skull
 } from 'lucide-react';
 
 export {
@@ -11,5 +11,5 @@ export {
     FlaskConical, Wheat, Shield, Star, Globe, Volume2, VolumeX,
     Crown, Save, RotateCcw, Trash, Home, X, FilePlus, Flame,
     Maximize, Minimize, ArrowUp, Wrench, Play, Pause, FastForward,
-    ChevronDown, Check, Diamond
+    ChevronDown, Check, Diamond, Hourglass, Skull
 };

@@ -3,7 +3,7 @@ export function ResourceCard({ icon, label, value, rate }) {
         <div className="resource-card">
             <div className="resource-label">{icon} {label}</div>
             <div className="resource-value">{Math.floor(value).toLocaleString()}</div>
-            <div className="resource-rate">+{rate.toFixed(1)}/초</div>
+            {rate !== undefined && <div className="resource-rate">+{rate.toFixed(1)}/턴</div>}
         </div>
     );
 }

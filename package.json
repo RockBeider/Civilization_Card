@@ -1,9 +1,9 @@
 {
-  "name": "civilization-game",
+  "name": "civilization-card",
   "version": "1.0.0",
-  "description": "Civilization Simulation Game",
+  "description": "Civilization Card Game",
   "type": "module",
-  "homepage": "https://RockBeider.github.io/Civilization_Game/",
+  "homepage": "https://RockBeider.github.io/Civilization_Card/",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
