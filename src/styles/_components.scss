@@ -73,26 +73,47 @@
     }
 
     &.btn-food {
-        .btn-icon { color: $yellow-400; }
-        &:hover { border-color: $yellow-500; }
+        .btn-icon {
+            color: $yellow-400;
+        }
+
+        &:hover {
+            border-color: $yellow-500;
+        }
     }
 
     &.btn-prod {
-        .btn-icon { color: $orange-400; }
-        &:hover { border-color: $orange-500; }
+        .btn-icon {
+            color: $orange-400;
+        }
+
+        &:hover {
+            border-color: $orange-500;
+        }
     }
 
     &.btn-sci {
-        .btn-icon { color: $blue-400; }
-        &:hover { border-color: $blue-500; }
+        .btn-icon {
+            color: $blue-400;
+        }
+
+        &:hover {
+            border-color: $blue-500;
+        }
     }
 }
 
 // Resource Card
 .resource-card {
     display: flex;
-    align-items: center;
-    gap: $spacing-3;
+    flex-direction: column;
+    gap: $spacing-1;
+
+    @include md-up {
+        gap: $spacing-3;
+        flex-direction: row;
+        align-items: center;
+    }
 
     .resource-label {
         font-size: $text-xs;
@@ -108,11 +129,13 @@
         font-weight: 700;
         color: $text-primary;
         font-family: $font-mono;
+        text-align: right;
     }
 
     .resource-rate {
         font-size: $text-xs;
         color: $slate-500;
+        text-align: right;
     }
 }
 
@@ -164,10 +187,21 @@
         font-size: $text-xs;
         color: $slate-400;
 
-        span { margin-right: $spacing-2; }
-        .cost-food { color: $yellow-400; }
-        .cost-prod { color: $orange-400; }
-        .cost-sci { color: $blue-400; }
+        span {
+            margin-right: $spacing-2;
+        }
+
+        .cost-food {
+            color: $yellow-400;
+        }
+
+        .cost-prod {
+            color: $orange-400;
+        }
+
+        .cost-sci {
+            color: $blue-400;
+        }
     }
 
     .building-output {
@@ -287,8 +321,13 @@
             background: linear-gradient(to right, rgba($slate-900, 0.7), rgba($slate-900, 0.2));
         }
 
-        .tech-name { color: $green-400; }
-        .tech-icon { color: $green-400; }
+        .tech-name {
+            color: $green-400;
+        }
+
+        .tech-icon {
+            color: $green-400;
+        }
     }
 
     &.available {
@@ -346,8 +385,13 @@
         font-weight: 600;
         margin-top: auto;
 
-        &.affordable { color: $blue-400; }
-        &.unaffordable { color: $red-400; }
+        &.affordable {
+            color: $blue-400;
+        }
+
+        &.unaffordable {
+            color: $red-400;
+        }
     }
 
     .tech-complete-msg {
@@ -373,6 +417,7 @@
 
     &.affordable {
         border-color: $yellow-500;
+
         &:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 12px rgba($yellow-500, 0.3);
@@ -387,22 +432,23 @@
     &.unaffordable {
         opacity: 0.8;
         filter: grayscale(0.5);
+
         &:hover {
-             border-color: $red-500;
+            border-color: $red-500;
         }
     }
 
     &.completed {
         border-color: $yellow-500;
         cursor: default;
-        
+
         &.wonder-glow {
             box-shadow: 0 0 15px rgba($yellow-500, 0.4);
             animation: pulse-glow 3s infinite;
         }
 
         .wonder-overlay {
-             background: linear-gradient(to right, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.5) 100%);
+            background: linear-gradient(to right, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.5) 100%);
         }
 
         .wonder-title {
@@ -422,7 +468,7 @@
     .wonder-overlay {
         position: absolute;
         inset: 0;
-        background: linear-gradient(to right, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.6) 60%, rgba(0,0,0,0.3) 100%);
+        background: linear-gradient(to right, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0.6) 60%, rgba(0, 0, 0, 0.3) 100%);
         z-index: 2;
     }
 
@@ -445,7 +491,7 @@
         font-weight: 800;
         font-size: $text-lg;
         color: $white;
-        text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
     }
 
     .wonder-icon {
@@ -459,7 +505,7 @@
         margin-bottom: auto; // push content down
         line-height: 1.4;
     }
-    
+
     .wonder-status-badge {
         display: inline-block;
         background-color: $yellow-500;
@@ -470,7 +516,7 @@
         border-radius: $radius-sm;
         margin-bottom: $spacing-1;
     }
-    
+
     .wonder-effect-tag {
         font-size: $text-xs;
         color: $yellow-300;
@@ -493,17 +539,37 @@
             display: flex;
             align-items: center;
             gap: $spacing-1;
-            
-            &.text-yellow { color: $yellow-400; }
-            &.text-orange { color: $orange-400; }
-            &.text-blue { color: $blue-400; }
-            &.text-red { color: $red-400; }
+
+            &.text-yellow {
+                color: $yellow-400;
+            }
+
+            &.text-orange {
+                color: $orange-400;
+            }
+
+            &.text-blue {
+                color: $blue-400;
+            }
+
+            &.text-red {
+                color: $red-400;
+            }
         }
     }
 }
 
 @keyframes pulse-glow {
-    0% { box-shadow: 0 0 10px rgba($yellow-500, 0.3); }
-    50% { box-shadow: 0 0 20px rgba($yellow-500, 0.5); border-color: $yellow-400; }
-    100% { box-shadow: 0 0 10px rgba($yellow-500, 0.3); }
+    0% {
+        box-shadow: 0 0 10px rgba($yellow-500, 0.3);
+    }
+
+    50% {
+        box-shadow: 0 0 20px rgba($yellow-500, 0.5);
+        border-color: $yellow-400;
+    }
+
+    100% {
+        box-shadow: 0 0 10px rgba($yellow-500, 0.3);
+    }
 }
