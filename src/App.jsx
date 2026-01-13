@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import { useGameLoop } from './hooks/useGameLoop';
+import { useSound } from './hooks/useSound';
 import { RaceSelectionScreen } from './components/screens/RaceSelectionScreen';
 import { VictoryScreen } from './components/screens/VictoryScreen'; // Assuming compatible
 import HandView from './components/ui/HandView';
 import FieldView from './components/ui/FieldView';
 import { ResourceCard } from './components/ui/BasicComponents'; // Trying to reuse
-import { Wheat, Hammer, FlaskConical, Scroll, Hourglass } from './components/ui/Icons';
+import { Wheat, Hammer, FlaskConical, Scroll, Hourglass, Home, Save, Volume2, VolumeX } from './components/ui/Icons';
 import { AGES } from './data/constants';
 
 function App() {
@@ -20,11 +21,19 @@ function App() {
         logs,
         startGame,
         playCard,
-        endTurn
+        endTurn,
+        quitGame
     } = useGameLoop();
 
+    const { initAudio, toggleMute, isMuted } = useSound();
+
+    const handleStartGame = (raceId) => {
+        initAudio();
+        startGame(raceId);
+    };
+
     if (gameState === 'selection') {
-        return <RaceSelectionScreen onSelect={(race) => startGame(race.id)} onLoad={() => alert("Save/Load not implemented in this version yet.")} />;
+        return <RaceSelectionScreen onSelect={(race) => handleStartGame(race.id)} onLoad={() => alert("Save/Load not implemented in this version yet.")} />;
     }
 
     if (gameState === 'victory') {
@@ -45,8 +54,21 @@ function App() {
                             <h1 className={`age-title ${AGES[currentAge].color}`}>{AGES[currentAge].name}</h1>
                             <p className="civ-info">{selectedRace?.name} | <Hourglass size={14} /> Turn {turn}</p>
                         </div>
-                    </div>
 
+
+                        <div className="control-buttons" style={{ position: 'absolute', top: '20px', right: '20px', display: 'flex', gap: '10px' }}>
+                            <button onClick={quitGame} title="메인으로" className="control-btn" style={{ background: 'rgba(0,0,0,0.5)', border: '1px solid #555', borderRadius: '50%', padding: '8px', color: 'white', cursor: 'pointer' }}>
+                                <Home size={18} />
+                            </button>
+                            <button onClick={() => alert("저장 기능은 현재 개발 중입니다.")} title="저장하기" className="control-btn" style={{ background: 'rgba(0,0,0,0.5)', border: '1px solid #555', borderRadius: '50%', padding: '8px', color: 'white', cursor: 'pointer' }}>
+                                <Save size={18} />
+                            </button>
+                            <button onClick={toggleMute} title="음소거" className="control-btn" style={{ background: 'rgba(0,0,0,0.5)', border: '1px solid #555', borderRadius: '50%', padding: '8px', color: 'white', cursor: 'pointer' }}>
+                                {isMuted ? <VolumeX size={18} /> : <Volume2 size={18} />}
+                            </button>
+                        </div>
+
+                    </div>
                     <div className="resource-bar">
                         <ResourceCard icon={<Wheat size={20} className="icon-text-yellow" />} label="식량" value={resources.food} />
                         <ResourceCard icon={<Hammer size={20} className="icon-text-orange" />} label="생산" value={resources.prod} />
@@ -91,7 +113,7 @@ function App() {
                     </div>
                 </div>
             </div>
-        </div>
+        </div >
     );
 }
 

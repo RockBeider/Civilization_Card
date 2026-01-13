@@ -1,47 +1,47 @@
 
-> civilization-game@1.0.0 build
+> civilization-card@1.0.0 build
 > vite build
 
 [36mvite v5.4.21 [32mbuilding for production...[36m[39m
 transforming...
-DEPRECATION WARNING [legacy-js-api]: The legacy JS API is deprecated and will be removed in Dart Sass 2.0.0.
-
-More info: https://sass-lang.com/d/legacy-js-api
-
-[32m✓[39m 47 modules transformed.
-[31mx[39m Build failed in 924ms
+[32m✓[39m 3 modules transformed.
+[31mx[39m Build failed in 107ms
 [31merror during build:
-[31m[vite:css] [sass] Undefined variable.
-    ╷
-363 │                 border-color: $indigo-400;
-    │                               ^^^^^^^^^^^
-    ╵
-  src\styles\_components.scss 363:31  @use
-  src\styles\main.scss 17:1           root stylesheet[31m
-file: [36mC:/Work Folder/Game/Civilization_Game/src/styles/main.scss[31m
+[31m[vite:esbuild] Transform failed with 3 errors:
+C:/Work Folder/Game/Civilization_Card/src/App.jsx:77:14: ERROR: Unexpected closing "header" tag does not match opening "div" tag
+C:/Work Folder/Game/Civilization_Card/src/App.jsx:115:10: ERROR: Unexpected closing "div" tag does not match opening "header" tag
+C:/Work Folder/Game/Civilization_Card/src/App.jsx:120:0: ERROR: Unexpected end of file before a closing "div" tag[31m
+file: [36mC:/Work Folder/Game/Civilization_Card/src/App.jsx:77:14[31m
 [33m
-Error: Undefined variable.
-    ╷
-363 │                 border-color: $indigo-400;
-    │                               ^^^^^^^^^^^
-    ╵
-  src\styles\_components.scss 363:31  @use
-  src\styles\main.scss 17:1           root stylesheet
+[33mUnexpected closing "header" tag does not match opening "div" tag[33m
+75 |                          </div>
+76 |                      </div>
+77 |              </header>
+   |                ^
+78 |  
+79 |              <div className="main-content">
+
+[33mUnexpected closing "div" tag does not match opening "header" tag[33m
+113|                  </div>
+114|              </div>
+115|          </div>
+   |            ^
+116|      );
+117|  }
+
+[33mUnexpected end of file before a closing "div" tag[33m
+118|  
+119|  export default App;
+120|  
+   |  ^
 [31m
-Error: Undefined variable.
-    ╷
-363 │                 border-color: $indigo-400;
-    │                               ^^^^^^^^^^^
-    ╵
-  src\styles\_components.scss 363:31  @use
-  src\styles\main.scss 17:1           root stylesheet
-    at Object.wrapException (C:\Work Folder\Game\Civilization_Game\node_modules\sass\sass.dart.js:2337:47)
-    at C:\Work Folder\Game\Civilization_Game\node_modules\sass\sass.dart.js:90581:23
-    at _wrapJsFunctionForAsync_closure.$protected (C:\Work Folder\Game\Civilization_Game\node_modules\sass\sass.dart.js:5005:15)
-    at _wrapJsFunctionForAsync_closure.call$2 (C:\Work Folder\Game\Civilization_Game\node_modules\sass\sass.dart.js:38505:12)
-    at Object._asyncStartSync (C:\Work Folder\Game\Civilization_Game\node_modules\sass\sass.dart.js:4969:20)
-    at _EvaluateVisitor2.visitVariableExpression$body$_EvaluateVisitor0 (C:\Work Folder\Game\Civilization_Game\node_modules\sass\sass.dart.js:90587:16)
-    at _EvaluateVisitor2.visitVariableExpression$1 (C:\Work Folder\Game\Civilization_Game\node_modules\sass\sass.dart.js:90561:19)
-    at VariableExpression0.accept$1$1 (C:\Work Folder\Game\Civilization_Game\node_modules\sass\sass.dart.js:128275:22)
-    at VariableExpression0.accept$1 (C:\Work Folder\Game\Civilization_Game\node_modules\sass\sass.dart.js:128278:19)
-    at C:\Work Folder\Game\Civilization_Game\node_modules\sass\sass.dart.js:88642:41[39m
+    at failureErrorWithLog (C:\Work Folder\Game\Civilization_Card\node_modules\esbuild\lib\main.js:1472:15)
+    at C:\Work Folder\Game\Civilization_Card\node_modules\esbuild\lib\main.js:755:50
+    at responseCallbacks.<computed> (C:\Work Folder\Game\Civilization_Card\node_modules\esbuild\lib\main.js:622:9)
+    at handleIncomingPacket (C:\Work Folder\Game\Civilization_Card\node_modules\esbuild\lib\main.js:677:12)
+    at Socket.readFromStdout (C:\Work Folder\Game\Civilization_Card\node_modules\esbuild\lib\main.js:600:7)
+    at Socket.emit (node:events:518:28)
+    at addChunk (node:internal/streams/readable:561:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+    at Readable.push (node:internal/streams/readable:392:5)
+    at Pipe.onStreamRead (node:internal/stream_base_commons:189:23)[39m

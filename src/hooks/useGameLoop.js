@@ -195,6 +195,14 @@ export const useGameLoop = () => {
         setTurn(prev => prev + 1);
     };
 
+    const quitGame = () => {
+        setGameState('selection');
+        setDeck([]);
+        setHand([]);
+        setField([]);
+        setDiscard([]);
+    };
+
     return {
         gameState,
         selectedRace,
@@ -206,6 +214,8 @@ export const useGameLoop = () => {
         logs,
         startGame,
         playCard,
-        endTurn
+        endTurn,
+        quitGame
     };
 };
+
