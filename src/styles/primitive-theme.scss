@@ -1,0 +1,500 @@
+// ============================================================
+// Reference UI Theme - Medieval Card Game Style
+// ============================================================
+
+@use 'sass:color';
+@use 'variables' as *;
+@use 'mixins' as *;
+
+// ========================================
+// Theme Variables
+// ========================================
+$wood-dark: #4a3728;
+$wood-medium: #6b4c35;
+$wood-light: #8b6b4d;
+$parchment: #f4e4bc;
+$parchment-dark: #d4c4a0;
+$gold: #ffd93d;
+$gold-dark: #c9a227;
+$text-dark: #2a1a10;
+$text-light: #f5f0e6;
+$danger-red: #cc3333;
+
+// ========================================
+// Game Container
+// ========================================
+.game-container.primitive-theme {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100vh;
+    max-width: 1200px;
+    margin: 0 auto;
+    overflow: hidden;
+    background: $wood-dark;
+    position: relative;
+
+    .game-background {
+        display: none; // Use CSS backgrounds instead
+    }
+}
+
+// ========================================
+// Top Bar - Wood Plank HUD
+// ========================================
+.top-bar-wrapper {
+    position: relative;
+    z-index: 10;
+    background: url('/assets/ui_wood_plank.png') center/cover no-repeat;
+    border-bottom: 4px solid $wood-dark;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+    min-height: 70px;
+
+    .hud-bar-svg {
+        display: none;
+    }
+
+    .top-bar-content {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: $spacing-3 $spacing-6;
+        max-width: 1100px;
+        margin: 0 auto;
+        height: 100%;
+    }
+}
+
+.primitive-theme .turn-info {
+    display: flex;
+    align-items: center;
+    gap: $spacing-4;
+
+    .era-icon {
+        width: 40px;
+        height: 40px;
+        filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.5));
+    }
+
+    .turn-badge {
+        background: linear-gradient(180deg, $wood-light 0%, $wood-medium 100%);
+        border: 3px solid $gold-dark;
+        border-radius: 8px;
+        padding: $spacing-2 $spacing-4;
+        font-weight: 800;
+        font-size: $text-xl;
+        color: $gold;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+        box-shadow:
+            inset 0 2px 4px rgba(255, 255, 255, 0.2),
+            0 3px 6px rgba(0, 0, 0, 0.4);
+    }
+
+    .era-name {
+        font-size: $text-xl;
+        font-weight: 700;
+        color: $text-light;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    }
+}
+
+.primitive-theme .resource-bar {
+    display: flex;
+    gap: $spacing-3;
+}
+
+.resource-card.primitive {
+    display: flex;
+    align-items: center;
+    gap: $spacing-2;
+    background: linear-gradient(180deg, rgba($wood-light, 0.9) 0%, rgba($wood-medium, 0.9) 100%);
+    border: 2px solid $gold-dark;
+    border-radius: 8px;
+    padding: $spacing-2 $spacing-3;
+    min-width: 80px;
+    box-shadow: inset 0 1px 3px rgba(255, 255, 255, 0.2);
+
+    .resource-value {
+        font-size: $text-xl;
+        font-weight: 800;
+        color: $gold;
+        text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
+    }
+}
+
+.control-btn.primitive {
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(180deg, $wood-light 0%, $wood-medium 100%);
+    border: 2px solid $gold-dark;
+    border-radius: 50%;
+    color: $text-light;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.4);
+
+    &:hover {
+        background: linear-gradient(180deg, $gold 0%, $gold-dark 100%);
+        transform: scale(1.1);
+    }
+}
+
+.primitive-theme .control-buttons {
+    display: flex;
+    gap: $spacing-2;
+}
+
+// ========================================
+// Field Section - Parchment Background
+// ========================================
+.field-section.primitive {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    z-index: 1;
+    background: url('/assets/ui_parchment.png') center/cover no-repeat;
+    padding: $spacing-4 $spacing-8;
+    min-height: 0;
+    box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.3);
+}
+
+.primitive-theme .field-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-4;
+    min-height: 0;
+}
+
+// Zone Wrapper - Building/Unit Zones
+.primitive-theme .zone-wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    overflow: visible;
+    position: relative;
+
+    .zone-frame-svg {
+        display: none;
+    }
+
+    .zone-inner {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+}
+
+.primitive-theme .zone-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: $spacing-2 0;
+    background: transparent;
+    border-radius: 0;
+    margin-bottom: $spacing-2;
+    border-bottom: 2px solid rgba($text-dark, 0.2);
+
+    .zone-title {
+        font-size: $text-2xl;
+        font-weight: 700;
+        color: $text-dark;
+        text-shadow: none;
+    }
+
+    .zone-count {
+        font-size: $text-base;
+        font-weight: 600;
+        color: $text-dark;
+        opacity: 0.7;
+    }
+}
+
+.primitive-theme .zone-content {
+    flex: 1;
+    display: flex;
+    flex-wrap: wrap;
+    gap: $spacing-3;
+    overflow-y: auto;
+    align-content: flex-start;
+    padding: $spacing-2 0;
+}
+
+.primitive-theme .zone-empty {
+    color: rgba($text-dark, 0.5);
+    font-size: $text-base;
+    padding: $spacing-4;
+    font-style: italic;
+}
+
+// ========================================
+// Log Panel - Next Turn Warning
+// ========================================
+.log-panel.primitive {
+    position: absolute;
+    right: $spacing-4;
+    top: $spacing-2;
+    width: 200px;
+    max-height: 120px;
+    background: linear-gradient(180deg, #f5e6d3 0%, #e8d5b8 100%);
+    border: 3px solid $wood-medium;
+    border-radius: 8px;
+    overflow: hidden;
+    z-index: 10;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+
+    .log-header {
+        padding: $spacing-2 $spacing-3;
+        background: $danger-red;
+        font-size: $text-sm;
+        font-weight: 700;
+        color: white;
+        display: flex;
+        align-items: center;
+        gap: $spacing-2;
+    }
+
+    .log-content {
+        max-height: 70px;
+        overflow-y: auto;
+        padding: $spacing-2;
+    }
+
+    .log-entry {
+        padding: $spacing-1;
+        font-size: 11px;
+        color: $text-dark;
+        line-height: 1.4;
+    }
+}
+
+// ========================================
+// Hand Section - Wood Plank Bottom
+// ========================================
+.hand-section.primitive {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: url('/assets/ui_wood_plank.png') center/cover no-repeat;
+    border-top: 6px solid $wood-dark;
+    padding: $spacing-4 $spacing-6;
+    position: relative;
+    z-index: 50;
+    min-height: 180px;
+    box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.5);
+}
+
+// Deck Info - Draw Pile
+.deck-info.primitive {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: $spacing-2;
+    min-width: 100px;
+
+    .deck-pile {
+        position: relative;
+        cursor: pointer;
+        transition: transform 0.2s;
+        padding: $spacing-2;
+        background: linear-gradient(180deg, $wood-light 0%, $wood-medium 100%);
+        border: 3px solid $wood-dark;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+
+        &:hover {
+            transform: scale(1.05);
+        }
+    }
+
+    .deck-count {
+        position: absolute;
+        top: -8px;
+        right: -8px;
+        background: $danger-red;
+        border: 2px solid white;
+        border-radius: 50%;
+        width: 28px;
+        height: 28px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        font-weight: 800;
+        color: white;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    }
+
+    .deck-label {
+        font-size: 14px;
+        font-weight: 700;
+        color: $text-light;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+    }
+}
+
+// Discard Info
+.discard-info.primitive {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: $spacing-2;
+    min-width: 100px;
+
+    .discard-pile {
+        position: relative;
+        width: 70px;
+        height: 100px;
+        background: linear-gradient(180deg, rgba($wood-light, 0.6) 0%, rgba($wood-medium, 0.6) 100%);
+        border: 3px dashed $wood-dark;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .discard-count {
+        font-size: 24px;
+        font-weight: 800;
+        color: $text-light;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+    }
+
+    .deck-label {
+        font-size: 14px;
+        font-weight: 700;
+        color: $text-light;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+    }
+}
+
+// Hand Container
+.primitive-theme .hand-container {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    padding: 0 $spacing-4;
+    overflow-x: visible;
+}
+
+.primitive-theme .hand-wrapper {
+    display: flex;
+    justify-content: center;
+    padding-bottom: $spacing-2;
+
+    // Fan effect for cards
+    .hand-card-wrapper {
+        margin-left: -30px;
+        transition: all 0.3s ease;
+        position: relative;
+
+        &:first-child {
+            margin-left: 0;
+        }
+
+        &:hover {
+            transform: translateY(-30px) scale(1.1);
+            z-index: 30;
+            margin-left: 0;
+            margin-right: 20px;
+        }
+    }
+}
+
+.primitive-theme .hand-empty {
+    color: $text-light;
+    font-size: $text-lg;
+    padding: $spacing-8;
+    opacity: 0.8;
+    font-style: italic;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+// End Turn Button
+.primitive-theme .turn-end-container {
+    cursor: pointer;
+    transition: transform 0.2s;
+    min-width: 120px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    img {
+        width: 100px;
+        height: 100px;
+        filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.5));
+        transition: all 0.2s;
+    }
+
+    &:hover img {
+        transform: scale(1.1);
+        filter: drop-shadow(0 6px 12px rgba(255, 200, 0, 0.5));
+    }
+
+    &:active img {
+        transform: scale(0.95);
+    }
+
+    .deck-label {
+        display: none;
+    }
+}
+
+// ========================================
+// Game Over Screen
+// ========================================
+.gameover-screen.primitive-theme {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background: linear-gradient(135deg, $wood-dark 0%, #1a1510 100%);
+
+    .gameover-content {
+        text-align: center;
+        padding: $spacing-8 $spacing-12;
+        background: url('/assets/ui_parchment.png') center/cover no-repeat;
+        border: 6px solid $wood-medium;
+        border-radius: 16px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+
+        h1 {
+            font-size: 3rem;
+            color: $danger-red;
+            margin-bottom: $spacing-4;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        p {
+            font-size: $text-xl;
+            color: $text-dark;
+            margin-bottom: $spacing-8;
+        }
+
+        .btn-restart {
+            padding: $spacing-4 $spacing-8;
+            font-size: $text-xl;
+            font-weight: 700;
+            background: linear-gradient(180deg, $gold 0%, $gold-dark 100%);
+            border: 4px solid $wood-medium;
+            border-radius: 12px;
+            color: $text-dark;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+
+            &:hover {
+                transform: scale(1.05);
+                box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5);
+            }
+        }
+    }
+}
