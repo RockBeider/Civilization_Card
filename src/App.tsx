@@ -7,17 +7,30 @@ import { useSound } from './hooks/useSound';
 import { RaceSelectionScreen } from './components/screens/RaceSelectionScreen';
 import { VictoryScreen } from './components/screens/VictoryScreen';
 import { Home, Save, Volume2, VolumeX, Heart } from './components/ui/Icons';
-import { ProductionIcon, FoodIcon, ScienceIcon, CastleTowerIcon } from './components/ui/GameIcons';
+import { CastleTowerIcon } from './components/ui/GameIcons';
 import { AGES, RACES } from './data/constants';
 import { createStarterDeck } from './data/mockCards';
 import type { RaceData, Card } from './types';
 import GameCard from './components/ui/Card';
+import IconGuide from './components/IconGuide';
 import './styles/primitive-theme.scss';
 
 // UI Assets
 import endTurnImg from '/assets/ui_end_turn.png';
+// Resource Icons (PNG)
+import iconProduction from './assets/icon_production.png';
+import iconFood from './assets/icon_food.png';
+import iconScience from './assets/icon_science.png';
+
+// URL 파라미터로 가이드 페이지 접근 체크
+const urlParams = new URLSearchParams(window.location.search);
+const showGuide = urlParams.get('guide') === 'true';
 
 function App() {
+    // 가이드 페이지 표시
+    if (showGuide) {
+        return <IconGuide />;
+    }
     // Zustand Store
     const {
         status,
@@ -101,15 +114,15 @@ function App() {
 
                     <div className="resource-bar">
                         <div className="resource-card primitive">
-                            <ProductionIcon size={20} />
+                            <img src={iconProduction} alt="Production" style={{ width: 24, height: 24 }} />
                             <span className="resource-value">{resources.production}</span>
                         </div>
                         <div className="resource-card primitive">
-                            <FoodIcon size={20} />
+                            <img src={iconFood} alt="Food" style={{ width: 24, height: 24 }} />
                             <span className="resource-value">{resources.food}</span>
                         </div>
                         <div className="resource-card primitive">
-                            <ScienceIcon size={20} />
+                            <img src={iconScience} alt="Science" style={{ width: 24, height: 24 }} />
                             <span className="resource-value">{resources.science}/100</span>
                         </div>
                         <div className="resource-card primitive">
