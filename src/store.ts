@@ -51,11 +51,12 @@ const initialState: GameState = {
     deck: initialDeck,
     field: initialField,
     turn: 1,
-    status: 'idle',
+    status: 'title',
     playerStats: {
         health: 100,
         maxHealth: 100,
     },
+    playerRace: null,
     logs: [],
 };
 
@@ -69,21 +70,29 @@ export const useGameStore = create<GameStore>()(
             // ========== ACTIONS ==========
 
             /**
-             * Start a new game with the given starter deck
+             * Enter Race Selection Screen
              */
-            startGame: (starterDeck: Card[]) => {
+            enterRaceSelection: () => {
+                set({ status: 'race_selection' });
+            },
+
+            /**
+             * Start a new game with the given starter deck and race
+             */
+            startGame: (starterDeck: Card[], race: string) => {
                 const instantiatedDeck = starterDeck.map(instantiateCard);
                 const shuffledDeck = shuffleArray(instantiatedDeck);
 
                 set({
                     ...initialState,
                     status: 'playing',
+                    playerRace: race,
                     deck: {
                         drawPile: shuffledDeck,
                         hand: [],
                         discardPile: [],
                     },
-                    logs: ['🎮 게임 시작!'],
+                    logs: [`🎮 ${race} 종족으로 게임 시작!`],
                 });
 
                 // Draw initial hand (5 cards)

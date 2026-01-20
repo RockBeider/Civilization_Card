@@ -7,7 +7,11 @@ import { useGameStore } from '../store';
 import { mockCards, createStarterDeck } from '../data/mockCards';
 import type { Card } from '../types';
 
-const GameTest: React.FC = () => {
+interface GameTestProps {
+    onClose?: () => void;
+}
+
+const GameTest: React.FC<GameTestProps> = ({ onClose }) => {
     const {
         status,
         resources,
@@ -124,9 +128,14 @@ const GameTest: React.FC = () => {
             <div style={styles.section}>
                 <h2>🎯 액션</h2>
                 <div style={styles.buttonRow}>
-                    {status === 'idle' && (
+                    {(status === 'title' || status === 'race_selection') && (
                         <button style={styles.button} onClick={handleStartGame}>
                             게임 시작
+                        </button>
+                    )}
+                    {onClose && (
+                        <button style={styles.buttonClose} onClick={onClose}>
+                            게임으로 돌아가기
                         </button>
                     )}
                     {status === 'playing' && (
@@ -278,6 +287,15 @@ const styles: Record<string, React.CSSProperties> = {
         fontSize: '14px',
         cursor: 'pointer',
         backgroundColor: '#ff6b6b',
+        color: '#fff',
+        border: 'none',
+        borderRadius: '6px',
+    },
+    buttonClose: {
+        padding: '10px 20px',
+        fontSize: '14px',
+        cursor: 'pointer',
+        backgroundColor: '#6c757d',
         color: '#fff',
         border: 'none',
         borderRadius: '6px',

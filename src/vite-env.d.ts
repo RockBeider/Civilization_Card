@@ -1,5 +1,9 @@
 /// <reference types="vite/client" />
 
+interface Window {
+    toggleDebug: () => void;
+}
+
 // 이미지 파일 모듈 선언
 declare module '*.png' {
     const src: string;

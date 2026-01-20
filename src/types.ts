@@ -9,7 +9,7 @@ export type ResourceType = 'food' | 'production' | 'science';
 export type CardType = 'action' | 'structure' | 'unit' | 'tech' | 'crisis';
 
 // --- Game Status ---
-export type GameStatus = 'idle' | 'playing' | 'gameover' | 'victory';
+export type GameStatus = 'title' | 'race_selection' | 'playing' | 'gameover' | 'victory';
 
 // --- Resources State ---
 export interface Resources {
@@ -93,6 +93,11 @@ export interface GameState {
         maxHealth: number;
     };
 
+    /**
+     * Selected Race ID (e.g., 'human', 'elf')
+     */
+    playerRace: string | null;
+
     // Log Messages
     logs: string[];
 }
@@ -100,7 +105,8 @@ export interface GameState {
 // --- Game Actions (Zustand Store Methods) ---
 export interface GameActions {
     // Game Flow
-    startGame: (starterDeck: Card[]) => void;
+    enterRaceSelection: () => void;
+    startGame: (starterDeck: Card[], race: string) => void;
     resetGame: () => void;
 
     // Card Actions

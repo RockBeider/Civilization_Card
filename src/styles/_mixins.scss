@@ -60,6 +60,12 @@
 }
 
 // Responsive breakpoint
+@mixin sm {
+    @media (max-width: $breakpoint-md) {
+        @content;
+    }
+}
+
 @mixin xl-up {
     @media (min-width: $breakpoint-xl) {
         @content;
