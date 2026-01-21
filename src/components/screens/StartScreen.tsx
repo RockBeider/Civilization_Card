@@ -14,8 +14,8 @@ export function StartScreen({ onStartGame, onContinue }: StartScreenProps) {
             backgroundPosition: 'center',
             backgroundAttachment: 'fixed'
         }}>
-            <div className="start-menu-panel animate-slide-in-left">
-                <div className="start-logo-area animate-fade-in">
+            <div className="start-menu-panel animate-fade-in">
+                <div className="start-logo-area">
                     <h1 className="main-logo-text">
                         <span className="logo-subtitle"><span>Card</span> <small>of</small></span> Civilization
                     </h1>

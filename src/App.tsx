@@ -58,8 +58,7 @@ function App() {
         deck,
         field,
         logs,
-        field,
-        logs,
+
         playerStats,
         playerRace,
         startGame,
@@ -144,8 +143,7 @@ function App() {
                     turn={turn}
                     era={era}
                     resources={resources}
-                    era={era}
-                    resources={resources}
+
                     playerStats={playerStats}
                     playerRace={playerRace}
                     isMuted={isMuted}
