@@ -21,6 +21,42 @@ import raceAtlantean from '../assets/race_atlantean.png';
 import { CARD_POOLS } from './cards';
 import { RaceData, AgeData } from '../types';
 
+/**
+ * 게임 밸런싱 상수
+ * 기획안에 명시된 기본값들을 정의합니다.
+ */
+export const GAME_CONSTANTS = {
+    // 플레이어 초기 체력 (수도 내구도)
+    PLAYER_HP: 50,
+    PLAYER_MAX_HP: 50,
+
+    // 매 턴 기본 제공 생산력
+    BASE_PRODUCTION: 3,
+
+    // 매 턴 드로우하는 카드 수
+    HAND_SIZE: 5,
+
+    // 필드 슬롯 제한
+    FIELD_SLOTS: {
+        structures: 5,
+        units: 5
+    },
+
+    // 시대 발전 비용 (인덱스 = 현재 시대)
+    // [원시→고대, 고대→중세, 중세→르네상스, 르네상스→산업, 산업→우주]
+    ERA_COSTS: [20, 50, 100, 200, 500],
+
+    // 기아 피해 (식량 1 부족당)
+    STARVATION_DAMAGE: 5,
+
+    // 초기 식량
+    STARTING_FOOD: 10,
+
+    // 초기 과학
+    STARTING_SCIENCE: 0,
+} as const;
+
+
 export const RACES: RaceData[] = [
     {
         id: 'human',
