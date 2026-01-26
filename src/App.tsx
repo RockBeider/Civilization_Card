@@ -155,45 +155,41 @@ function App() {
                 <div className="field-section primitive">
                     <div className="field-content">
                         {/* Building Zone */}
-                        <div className="zone-wrapper">
-                            <div className="zone-inner">
-                                <div className="zone-header">
-                                    <span className="zone-title">Building Zone</span>
-                                    <span className="zone-count">{field.structures.length}/5</span>
-                                </div>
-                                <div className="zone-content">
-                                    {field.structures.map((card) => (
-                                        <GameCard
-                                            key={card.instanceId}
-                                            card={card}
-                                            disabled={true}
-                                        />
-                                    ))}
-                                    {field.structures.length === 0 && (
-                                        <div className="zone-empty">No buildings</div>
-                                    )}
-                                </div>
+                        <div className="zone-container">
+                            <div className="zone-header">
+                                <span className="zone-title">Building Zone</span>
+                                <span className="zone-count">{field.structures.length}/5</span>
+                            </div>
+                            <div className="zone-content">
+                                {field.structures.map((card) => (
+                                    <GameCard
+                                        key={card.instanceId}
+                                        card={card}
+                                        disabled={true}
+                                    />
+                                ))}
+                                {field.structures.length === 0 && (
+                                    <div className="zone-empty">No buildings</div>
+                                )}
                             </div>
                         </div>
                         {/* Unit Zone */}
-                        <div className="zone-wrapper">
-                            <div className="zone-inner">
-                                <div className="zone-header">
-                                    <span className="zone-title">Unit Zone</span>
-                                    <span className="zone-count">{field.units.length}</span>
-                                </div>
-                                <div className="zone-content">
-                                    {field.units.map((card) => (
-                                        <GameCard
-                                            key={card.instanceId}
-                                            card={card}
-                                            disabled={true}
-                                        />
-                                    ))}
-                                    {field.units.length === 0 && (
-                                        <div className="zone-empty">No units</div>
-                                    )}
-                                </div>
+                        <div className="zone-container">
+                            <div className="zone-header">
+                                <span className="zone-title">Unit Zone</span>
+                                <span className="zone-count">{field.units.length}</span>
+                            </div>
+                            <div className="zone-content">
+                                {field.units.map((card) => (
+                                    <GameCard
+                                        key={card.instanceId}
+                                        card={card}
+                                        disabled={true}
+                                    />
+                                ))}
+                                {field.units.length === 0 && (
+                                    <div className="zone-empty">No units</div>
+                                )}
                             </div>
                         </div>
                     </div>
