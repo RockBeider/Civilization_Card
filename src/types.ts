@@ -147,6 +147,31 @@ export interface CardData {
     unplayable?: boolean;
 }
 
+// --- Race Data Definition ---
+export interface RaceData {
+    id: string;
+    name: string;
+    desc: string;
+    bonus: {
+        food: number;
+        prod: number;
+        sci: number;
+        energy: number;
+    };
+    img: string;
+    starter_deck: string[];
+}
+
+// --- Age (Era) Data Definition ---
+export interface AgeData {
+    id: number;
+    name: string;
+    color: string;
+    img: string;
+    groundImg: string;
+    cardPool: string[]; // List of card IDs
+}
+
 
 // --- Deck State ---
 export interface DeckState {
@@ -239,3 +264,27 @@ export interface GameActions {
 
 // --- Combined Store Type ---
 export type GameStore = GameState & GameActions;
+
+// --- Data Types (Constants) ---
+export interface RaceData {
+    id: string;
+    name: string;
+    desc: string;
+    bonus: {
+        food: number;
+        prod: number;
+        sci: number;
+        energy: number;
+    };
+    img: string;
+    starter_deck: string[];
+}
+
+export interface AgeData {
+    id: number;
+    name: string;
+    color: string;
+    img: string;
+    groundImg: string;
+    cardPool: string[];
+}
