@@ -11,7 +11,6 @@ import iconProduction from '../assets/icon_production_modern.png';
 import iconFood from '../assets/icon_food_modern.png';
 import iconScience from '../assets/icon_science_modern.png';
 import iconHealth from '../assets/icon_health_modern.png';
-import iconGold from '../assets/icon_gold_modern.png'; // Prepared for future use
 
 interface TopBarProps {
     turn: number;
@@ -57,21 +56,24 @@ const TopBar: React.FC<TopBarProps> = ({
                                 className="race-icon-small"
                             />
                         )}
-                        <div className="resource-card modern">
-                            <img src={iconHealth} alt="Health" className="resource-icon" />
-                            <span className="resource-value">{playerStats.health}</span>
-                        </div>
+                    </div>
+                    <div className="resource-card">
+                        <img src={iconHealth} alt="Health" className="resource-icon" />
+                        <span className="resource-value">{playerStats.health}</span>
+                    </div>
+                    <div className="turn-info">
+                        <span className="era-name">Turn <span className="highlight">{turn}</span> | {AGES[currentAge]?.name || 'Medieval Era'}</span>
                     </div>
                     <div className="resource-bar">
-                        <div className="resource-card modern">
+                        <div className="resource-card">
                             <img src={iconProduction} alt="Production" className="resource-icon" />
                             <span className="resource-value">{resources.production}</span>
                         </div>
-                        <div className="resource-card modern">
+                        <div className="resource-card">
                             <img src={iconFood} alt="Food" className="resource-icon" />
                             <span className="resource-value">{resources.food}</span>
                         </div>
-                        <div className="resource-card modern">
+                        <div className="resource-card">
                             <img src={iconScience} alt="Science" className="resource-icon" />
                             <span className="resource-value">{resources.science}</span>
                         </div>
@@ -81,9 +83,6 @@ const TopBar: React.FC<TopBarProps> = ({
 
                 {/* RIGHT: Turn Info + Controls */}
                 <div className="top-bar-right">
-                    <div className="turn-info">
-                        <span className="era-name">Turn <span className="highlight">{turn}</span> | {AGES[currentAge]?.name || 'Medieval Era'}</span>
-                    </div>
                     <div className="control-buttons">
                         <button onClick={onQuit} title="메인으로" className="control-btn modern">
                             <Home size={18} />

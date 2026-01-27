@@ -3,7 +3,7 @@
 // ============================================================
 
 import React from 'react';
-import { Wheat, Hammer, FlaskConical, Skull, Zap } from './Icons';
+import { Wheat, Hammer, FlaskConical, Zap } from './Icons';
 import type { Card as CardType } from '../../types';
 
 interface CardProps {
@@ -56,6 +56,14 @@ const Card: React.FC<CardProps> = ({ card, onClick, disabled, isPlayable = true 
         }
     };
 
+    // Get era style class
+    const getEraStyleClass = () => {
+        if (card.era === undefined) return 'style-ancient'; // Default to ancient
+        if (card.era <= 1) return 'style-ancient'; // Primitive & Ancient
+        if (card.era <= 3) return 'style-medieval'; // Medieval & Renaissance
+        return 'style-future'; // Industrial & Space
+    };
+
     const handleClick = () => {
         if (!disabled && isPlayable && onClick) {
             onClick(card);
@@ -64,7 +72,7 @@ const Card: React.FC<CardProps> = ({ card, onClick, disabled, isPlayable = true 
 
     return (
         <div
-            className={`game-card ${getTypeColor()} ${isPlayable ? 'playable' : 'unplayable'} ${disabled ? 'disabled' : ''}`}
+            className={`game-card ${getEraStyleClass()} ${getTypeColor()} ${isPlayable ? 'playable' : 'unplayable'} ${disabled ? 'disabled' : ''}`}
             onClick={handleClick}
         >
             <div className="card-header">

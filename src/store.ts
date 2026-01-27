@@ -4,7 +4,7 @@
 
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
-import type { Card, GameState, GameStore, DeckState, FieldState, Resources, CrisisCardData, PhaseType } from './types';
+import type { Card, GameState, GameStore, DeckState, FieldState, Resources, PhaseType } from './types';
 import { GAME_CONSTANTS } from './data/constants';
 import { getRandomCrisisCard, getCurseCardById } from './data/cards';
 
@@ -349,11 +349,17 @@ export const useGameStore = create<GameStore>()(
                     logs: newLogs,
                 });
 
-                // 5. Draw cards
-                get().drawCard(GAME_CONSTANTS.HAND_SIZE);
+                // 5. Draw cards (생산력 비례 드로우)
+                // HandSize = 5(기본) + floor(TurnProduction / 10), 최대 10장
+                const baseHandSize = GAME_CONSTANTS.HAND_SIZE; // 5
+                const bonusCards = Math.floor(newProduction / 10);
+                const maxHandSize = 10;
+                const totalHandSize = Math.min(baseHandSize + bonusCards, maxHandSize);
+
+                get().drawCard(totalHandSize);
 
                 set((s) => ({
-                    logs: [...s.logs, `🃏 카드 ${GAME_CONSTANTS.HAND_SIZE}장 드로우. 행동 단계 시작!`],
+                    logs: [...s.logs, `🃏 카드 ${totalHandSize}장 드로우 (기본 ${baseHandSize} + 보너스 ${bonusCards}${totalHandSize >= maxHandSize ? ', 최대' : ''}). 행동 단계 시작!`],
                 }));
             },
 

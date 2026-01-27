@@ -296,24 +296,22 @@
 
 
 // ========================================
-// Bottom Section - Hand Area (Wood Recess)
+// Bottom Section - Hand Area (Hearthstone Style)
 // ========================================
 .hand-section {
-    background: #3e2723; // Dark wood
-    border-top: 4px solid #1a0f0a; // Deep shadow/inset border
-    padding: $spacing-2 $spacing-4;
-    flex-shrink: 0;
-    position: relative;
-    z-index: 50;
-    box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.5);
+    position: fixed; // Fixed to bottom of screen
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 180px; // Height for card area
+    background: linear-gradient(to top, rgba(30, 20, 15, 0.95) 0%, transparent 100%);
+    padding: 0 $spacing-4;
+    z-index: 100;
+    pointer-events: none; // Allow clicks to pass through empty areas
 
-    // Wood grain texture overlay
-    &::before {
-        content: '';
-        position: absolute;
-        inset: 0;
-        background: repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.02) 0, rgba(255, 255, 255, 0.02) 1px, transparent 1px, transparent 10px);
-        pointer-events: none;
+    // All interactive children should receive events
+    >* {
+        pointer-events: auto;
     }
 }
 
@@ -321,23 +319,47 @@
     display: flex;
     align-items: flex-end;
     justify-content: center;
-    gap: $spacing-3;
-    min-height: 160px;
+    height: 100%;
+    position: relative;
+    padding-bottom: 0; // Cards extend off-screen
 }
 
 .hand-wrapper {
     display: flex;
-    gap: $spacing-2;
     justify-content: center;
-    flex-wrap: wrap;
+    align-items: flex-end;
+    position: relative;
+    height: 100%;
+    // Cards will be positioned individually via inline styles
 }
 
+// Individual card wrapper - centered overlapping
 .hand-card-wrapper {
-    transition: transform 0.2s ease;
+    cursor: pointer;
+    transition: margin-left 0.1s;
 
+    // Card inside should scale from bottom center
+    .game-card {
+        transform-origin: bottom center;
+        transition: transform 0.1s;
+    }
+
+    &+.hand-card-wrapper {
+        margin-left: -30px;
+    }
+
+    // Hover: lift up and scale (no horizontal movement)
     &:hover {
-        transform: translateY(-10px);
-        z-index: 10;
+        margin-left: 0;
+        z-index: 100 !important;
+
+        .game-card {
+            transform: scale(1.25);
+        }
+
+        &+.hand-card-wrapper {
+            margin-left: 0;
+        }
     }
 }
 
@@ -345,6 +367,10 @@
     color: $slate-500;
     font-size: $text-sm;
     padding: $spacing-8;
+    position: absolute;
+    bottom: 60px;
+    left: 50%;
+    transform: translateX(-50%);
 }
 
 // Turn End Button

@@ -172,6 +172,26 @@ export interface AgeData {
     cardPool: string[]; // List of card IDs
 }
 
+// --- Enemy Data Definition ---
+export interface EnemyData {
+    id: string;
+    name: string;
+    type: string;
+    stats: {
+        health: number;
+        attack: number;
+    };
+    effect?: {
+        on_spawn?: string;
+        on_turn_end?: string;
+    };
+    reward?: {
+        resource: ResourceType;
+        value: number;
+    };
+    era: number;
+}
+
 
 // --- Deck State ---
 export interface DeckState {
