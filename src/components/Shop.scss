@@ -1,0 +1,226 @@
+@use '../styles/variables' as *;
+@use '../styles/mixins' as *;
+
+.shop-container {
+    display: flex;
+    flex-direction: column;
+    padding: $spacing-4;
+    background: rgba(0, 0, 0, 0.6);
+    border-left: 2px solid $gold;
+    width: 250px;
+    height: 100%;
+    overflow-y: auto;
+    color: $white;
+}
+
+.shop-header {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-2;
+    margin-bottom: $spacing-4;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    padding-bottom: $spacing-2;
+
+    h3 {
+        font-size: $text-lg;
+        font-weight: bold;
+        color: $gold;
+        margin: 0;
+        text-align: center;
+    }
+}
+
+.shop-actions {
+    display: flex;
+    gap: $spacing-2;
+    justify-content: center;
+
+    .btn-action {
+        flex: 1;
+        padding: $spacing-2;
+        border: 1px solid $gold;
+        border-radius: $radius-sm;
+        background: rgba(0, 0, 0, 0.5);
+        color: $white;
+        font-size: $text-xs;
+        cursor: pointer;
+        transition: all 0.2s;
+
+        &:hover:not(:disabled) {
+            background: rgba($gold, 0.2);
+        }
+
+        &:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            border-color: $slate-600;
+        }
+
+        &.btn-refresh {
+            border-color: $blue-400;
+            color: $blue-100;
+        }
+
+        &.btn-trash {
+            border-color: $red-400;
+            color: $red-100;
+        }
+    }
+}
+
+.shop-cards {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-4;
+    flex: 1;
+}
+
+.shop-card-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-2;
+    align-items: center;
+
+    // GameCard Override within Shop
+    .game-card {
+        width: 100%; // Full width of shop panel
+        height: auto;
+    }
+
+    .btn-buy {
+        width: 100%;
+        padding: $spacing-2;
+        background: linear-gradient(90deg, #c2410c, #ea580c); // Orange
+        border: none;
+        border-radius: $radius-sm;
+        color: $white;
+        font-weight: bold;
+        font-size: $text-sm;
+        cursor: pointer;
+        transition: transform 0.1s;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        &:hover:not(:disabled) {
+            transform: scale(1.05);
+            background: linear-gradient(90deg, #ea580c, #f97316);
+        }
+
+        &:active:not(:disabled) {
+            transform: scale(0.95);
+        }
+
+        &.disabled {
+            background: $slate-600;
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+    }
+}
+
+.shop-empty {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: $slate-500;
+    font-style: italic;
+    min-height: 200px;
+    border: 1px dashed $slate-600;
+    border-radius: $radius-md;
+}
+
+// Trash Modal
+.trash-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.trash-modal {
+    background: $slate-900;
+    border: 2px solid $red-500;
+    border-radius: $radius-lg;
+    width: 90%;
+    max-width: 800px;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 0 20px rgba($red-500, 0.5);
+
+    .trash-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: $spacing-4;
+        background: rgba($red-900, 0.5);
+        border-bottom: 1px solid $red-500;
+
+        h3 {
+            margin: 0;
+            color: $red-100;
+        }
+
+        button {
+            background: none;
+            border: none;
+            color: $white;
+            font-size: $text-xl;
+            cursor: pointer;
+        }
+    }
+
+    .trash-content {
+        padding: $spacing-4;
+        overflow-y: auto;
+        
+        p {
+            color: $slate-300;
+            margin-bottom: $spacing-4;
+            text-align: center;
+        }
+    }
+
+    .trash-card-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+        gap: $spacing-3;
+        justify-content: center;
+
+        .trash-card-item {
+            cursor: pointer;
+            transition: transform 0.2s;
+            position: relative;
+
+            &:hover {
+                transform: scale(1.05);
+                z-index: 10;
+                
+                &::after {
+                    content: '🗑️';
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    font-size: 2rem;
+                    z-index: 20;
+                    text-shadow: 0 0 5px black;
+                }
+                
+                // Dim the card slightly on hover to show delete intent
+                .game-card {
+                     filter: grayscale(0.5) brightness(0.7);
+                     border-color: $red-500;
+                }
+            }
+        }
+    }
+}

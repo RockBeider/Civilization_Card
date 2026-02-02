@@ -188,6 +188,9 @@ export interface GameState {
     // Next Turn Crisis (예고)
     nextCrisis: CrisisCardData | null;
 
+    // Crisis Cooldown (위기 발생까지 남은 턴 수)
+    crisisCooldown: number;
+
     // Player Stats
     playerStats: {
         health: number;
@@ -198,6 +201,9 @@ export interface GameState {
      * Selected Race ID (e.g., 'human', 'elf')
      */
     playerRace: string | null;
+
+    // Shop State
+    shopCards: Card[];
 
     // Log Messages
     logs: string[];
@@ -214,6 +220,11 @@ export interface GameActions {
     drawCard: (count: number) => void;
     playCard: (cardInstanceId: string) => void;
     discardCard: (cardInstanceId: string) => void;
+
+    // Shop Actions
+    refreshShop: () => void;
+    buyCard: (card: Card) => void;
+    removeCard: (cardInstanceId: string) => void;
 
     // Phase Management
     nextPhase: () => void;

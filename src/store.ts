@@ -1,19 +1,19 @@
 // ============================================================
-// Civilization Deck Builder - Zustand Game Store
+// 문명 덱 빌더 - Zustand 게임 스토어
 // ============================================================
 
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 import type { Card, GameState, GameStore, DeckState, FieldState, Resources, CrisisCardData, PhaseType } from './types';
 import { GAME_CONSTANTS } from './data/constants';
-import { getRandomCrisisCard, getCurseCardById } from './data/cards';
+import { getRandomCrisisCard, getCurseCardById, CARDS_BY_ERA } from './data/cards';
 
-// --- Helper: Generate unique instance ID ---
+// --- 도우미: 고유 인스턴스 ID 생성 ---
 const generateInstanceId = (): string => {
     return Math.random().toString(36).substring(2, 11);
 };
 
-// --- Helper: Fisher-Yates Shuffle ---
+// --- 도우미: 피셔-예이츠 셔플 ---
 const shuffleArray = <T>(array: T[]): T[] => {
     const shuffled = [...array];
     for (let i = shuffled.length - 1; i > 0; i--) {
@@ -23,13 +23,53 @@ const shuffleArray = <T>(array: T[]): T[] => {
     return shuffled;
 };
 
-// --- Helper: Instantiate Card (add unique instanceId) ---
+// --- 도우미: 카드 인스턴스화 (고유 instanceId 추가) ---
 const instantiateCard = (card: Card): Card => ({
     ...card,
     instanceId: generateInstanceId(),
 });
 
-// --- Initial State ---
+// --- 도우미: 상점 카드 뽑기 (확률 적용) ---
+const getShopCards = (currentEra: number, count: number): Card[] => {
+    const cards: Card[] = [];
+
+    // 시대별 카드 풀 준비
+    const currentEraCards = CARDS_BY_ERA.find(g => g.era === (currentEra === 0 ? 'Primitive' :
+                                                            currentEra === 1 ? 'Ancient' :
+                                                            currentEra === 2 ? 'Medieval' :
+                                                            currentEra === 3 ? 'Renaissance' :
+                                                            currentEra === 4 ? 'Industrial' : 'Space'))?.cards || [];
+
+    const prevEraCards = currentEra > 0 ? CARDS_BY_ERA.find(g => g.era === (currentEra - 1 === 0 ? 'Primitive' :
+                                                                           currentEra - 1 === 1 ? 'Ancient' :
+                                                                           currentEra - 1 === 2 ? 'Medieval' :
+                                                                           currentEra - 1 === 3 ? 'Renaissance' :
+                                                                           currentEra - 1 === 4 ? 'Industrial' : 'Space'))?.cards || [] : [];
+
+    // 각 슬롯마다 확률적으로 카드 선택
+    for (let i = 0; i < count; i++) {
+        let selectedPool = currentEraCards;
+
+        // 원시 시대가 아니고, 이전 시대 카드가 있다면 20% 확률로 이전 시대 카드 등장
+        if (currentEra > 0 && prevEraCards.length > 0) {
+            if (Math.random() < 0.2) {
+                selectedPool = prevEraCards;
+            }
+        }
+
+        // 풀에서 랜덤 선택
+        if (selectedPool.length > 0) {
+            const randomCard = selectedPool[Math.floor(Math.random() * selectedPool.length)];
+            // CardData -> Card 변환 (instanceId는 구매 시점이나 이곳에서 부여, 여기선 미리 부여해둠)
+            // @ts-ignore - CardData와 Card 타입 호환성 문제 해결 필요하지만 일단 캐스팅
+            cards.push(instantiateCard(randomCard as any));
+        }
+    }
+
+    return cards;
+};
+
+// --- 초기 상태 ---
 const initialResources: Resources = {
     food: GAME_CONSTANTS.STARTING_FOOD,
     production: 0,
@@ -52,11 +92,13 @@ const initialState: GameState = {
     era: 0,
     deck: initialDeck,
     field: initialField,
+    shopCards: [],
     turn: 1,
     status: 'title',
     phase: 'start',
     currentCrisis: null,
     nextCrisis: null,
+    crisisCooldown: Math.floor(Math.random() * (GAME_CONSTANTS.CRISIS_COOLDOWN_MAX - GAME_CONSTANTS.CRISIS_COOLDOWN_MIN + 1)) + GAME_CONSTANTS.CRISIS_COOLDOWN_MIN,
     playerStats: {
         health: GAME_CONSTANTS.PLAYER_HP,
         maxHealth: GAME_CONSTANTS.PLAYER_MAX_HP,
@@ -65,28 +107,31 @@ const initialState: GameState = {
     logs: [],
 };
 
-// --- Zustand Store ---
+// --- Zustand 스토어 ---
 export const useGameStore = create<GameStore>()(
     devtools(
         (set, get) => ({
-            // ========== STATE ==========
+            // ========== 상태 ==========
             ...initialState,
 
-            // ========== ACTIONS ==========
+            // ========== 액션 ==========
 
             /**
-             * Enter Race Selection Screen
+             * 종족 선택 화면 진입
              */
             enterRaceSelection: () => {
                 set({ status: 'race_selection' });
             },
 
             /**
-             * Start a new game with the given starter deck and race
+             * 주어진 시작 덱과 종족으로 새 게임 시작
              */
             startGame: (starterDeck: Card[], race: string) => {
                 const instantiatedDeck = starterDeck.map(instantiateCard);
                 const shuffledDeck = shuffleArray(instantiatedDeck);
+
+                // 초기 상점 구성
+                const initialShop = getShopCards(0, 3); // 원시 시대(0)로 시작
 
                 set({
                     ...initialState,
@@ -98,22 +143,23 @@ export const useGameStore = create<GameStore>()(
                         hand: [],
                         discardPile: [],
                     },
-                    logs: [`🎮 ${race} 종족으로 게임 시작!`],
+                    shopCards: initialShop,
+                    logs: [`🎮 ${race} 종족으로 게임 시작!`, `🏪 상점이 열렸습니다.`],
                 });
 
-                // Execute Start Phase
+                // 시작 단계 실행
                 get().executeStartPhase();
             },
 
             /**
-             * Reset game to initial state
+             * 게임을 초기 상태로 재설정
              */
             resetGame: () => {
                 set(initialState);
             },
 
             /**
-             * Draw cards from drawPile to hand
+             * 뽑을 덱에서 카드를 손으로 가져옴
              */
             drawCard: (count: number) => {
                 set((state) => {
@@ -122,11 +168,11 @@ export const useGameStore = create<GameStore>()(
                     const newLogs = [...state.logs];
 
                     for (let i = 0; i < count; i++) {
-                        // If drawPile is empty, shuffle discardPile into drawPile
+                        // 뽑을 덱이 비어있으면, 버린 카드 덱을 섞어서 뽑을 덱으로 이동
                         if (drawPile.length === 0) {
                             if (discardPile.length === 0) {
                                 newLogs.push('⚠️ 더 이상 뽑을 카드가 없습니다.');
-                                break; // No cards left to draw
+                                break; // 더 이상 뽑을 카드가 없음
                             }
                             drawPile = shuffleArray(discardPile);
                             discardPile = [];
@@ -151,12 +197,12 @@ export const useGameStore = create<GameStore>()(
             },
 
             /**
-             * Play a card from hand
+             * 손패의 카드를 사용
              */
             playCard: (cardInstanceId: string) => {
                 const state = get();
 
-                // Can only play cards during Action phase
+                // 행동 단계에서만 카드 사용 가능
                 if (state.phase !== 'action') {
                     set((s) => ({
                         logs: [...s.logs, '❌ 행동 단계에서만 카드를 사용할 수 있습니다.'],
@@ -177,7 +223,7 @@ export const useGameStore = create<GameStore>()(
 
                 const card = state.deck.hand[cardIndex];
 
-                // Check if card is playable
+                // 카드가 사용 가능한지 확인
                 if (card.unplayable) {
                     set((s) => ({
                         logs: [...s.logs, `❌ ${card.name}은(는) 사용할 수 없는 카드입니다.`],
@@ -185,7 +231,7 @@ export const useGameStore = create<GameStore>()(
                     return;
                 }
 
-                // Check cost (uses production primarily)
+                // 비용 확인 (주로 생산력 사용)
                 const { food = 0, production = 0, science = 0 } = card.cost;
                 if (
                     state.resources.food < food ||
@@ -198,7 +244,7 @@ export const useGameStore = create<GameStore>()(
                     return;
                 }
 
-                // Check field slot limits
+                // 필드 슬롯 제한 확인
                 if (card.type === 'structure' && state.field.structures.length >= GAME_CONSTANTS.FIELD_SLOTS.structures) {
                     set((s) => ({
                         logs: [...s.logs, `❌ 건물 슬롯이 가득 찼습니다. (최대 ${GAME_CONSTANTS.FIELD_SLOTS.structures})`],
@@ -212,27 +258,27 @@ export const useGameStore = create<GameStore>()(
                     return;
                 }
 
-                // Deduct cost
+                // 비용 차감
                 const newResources: Resources = {
                     food: state.resources.food - food,
                     production: state.resources.production - production,
                     science: state.resources.science - science,
                 };
 
-                // Remove card from hand
+                // 손패에서 카드 제거
                 const newHand = [...state.deck.hand];
                 newHand.splice(cardIndex, 1);
 
-                // Apply card effect
+                // 카드 효과 적용
                 const effectResult = card.effect(state);
 
-                // Merge effect result with current state
+                // 효과 결과를 현재 상태와 병합
                 const mergedResources = {
                     ...newResources,
                     ...(effectResult.resources || {}),
                 };
 
-                // Determine where the card goes after being played
+                // 사용된 카드가 어디로 갈지 결정
                 let newDiscardPile = [...state.deck.discardPile];
                 let newStructures = [...state.field.structures];
                 let newUnits = [...state.field.units];
@@ -242,7 +288,7 @@ export const useGameStore = create<GameStore>()(
                 } else if (card.type === 'unit') {
                     newUnits.push(card);
                 } else {
-                    // Action, Tech, Crisis -> Discard
+                    // 행동, 기술, 위기 -> 버림
                     newDiscardPile.push(card);
                 }
 
@@ -257,7 +303,7 @@ export const useGameStore = create<GameStore>()(
                         structures: newStructures,
                         units: newUnits,
                     },
-                    // Merge any other state changes from effect
+                    // 효과로 인한 다른 상태 변경 사항 병합
                     era: effectResult.era ?? state.era,
                     playerStats: effectResult.playerStats ?? state.playerStats,
                     logs: [...state.logs, `✅ ${card.name} 사용!`],
@@ -265,7 +311,7 @@ export const useGameStore = create<GameStore>()(
             },
 
             /**
-             * Discard a specific card from hand
+             * 손패에서 특정 카드를 버림
              */
             discardCard: (cardInstanceId: string) => {
                 set((state) => {
@@ -290,14 +336,153 @@ export const useGameStore = create<GameStore>()(
                 });
             },
 
-            // ========== PHASE MANAGEMENT ==========
+            // ========== 상점 액션 ==========
 
             /**
-             * Execute Start Phase (Phase 1)
-             * - Reset production to base value
-             * - Trigger structure passives
-             * - Draw cards
-             * - Activate crisis
+             * 상점 새로고침
+             */
+            refreshShop: () => {
+                const state = get();
+                // 비용: 생산력 2 (예외: 턴 시작 시 무료 호출은 비용 로직 밖이어야 함, 여기서 비용 체크하면 됨)
+                // 만약 이 함수를 '비용 지불 버전'과 '무료 버전'으로 나눌 필요가 있다면 인자로 처리.
+                // 여기서는 UI에서 호출하는 '유료' 새로고침을 기본으로 하고,
+                // 턴 시작 시에는 내부 로직으로 처리하거나 별도 함수 사용.
+                // -> 턴 시작 시에는 getShopCards만 따로 호출해서 set 하면 됨.
+                // -> 따라서 이 함수는 유저 액션용(유료)으로 정의.
+
+                if (state.resources.production < 2) {
+                    set((s) => ({
+                        logs: [...s.logs, `❌ 생산력이 부족합니다. (필요: 2)`],
+                    }));
+                    return;
+                }
+
+                const newShopCards = getShopCards(state.era, 3);
+
+                set({
+                    resources: {
+                        ...state.resources,
+                        production: state.resources.production - 2
+                    },
+                    shopCards: newShopCards,
+                    logs: [...state.logs, `🔄 상점 목록을 갱신했습니다. (비용: 2 생산)`],
+                });
+            },
+
+            /**
+             * 카드 구매
+             */
+            buyCard: (card: Card) => {
+                const state = get();
+                const cost = card.cost.production || 0;
+
+                if (state.resources.production < cost) {
+                    set((s) => ({
+                        logs: [...s.logs, `❌ 생산력이 부족합니다. (필요: ${cost})`],
+                    }));
+                    return;
+                }
+
+                // 상점에서 카드 제거
+                const newShopCards = state.shopCards.filter(c => c.instanceId !== card.instanceId);
+
+                // 구매한 카드를 무덤(Discard Pile)에 추가 (새 ID 부여)
+                const newCard = instantiateCard(card);
+
+                set({
+                    resources: {
+                        ...state.resources,
+                        production: state.resources.production - cost
+                    },
+                    shopCards: newShopCards,
+                    deck: {
+                        ...state.deck,
+                        discardPile: [...state.deck.discardPile, newCard]
+                    },
+                    logs: [...state.logs, `💰 ${card.name} 구매 완료!`],
+                });
+            },
+
+            /**
+             * 카드 폐기 (덱 압축)
+             */
+            removeCard: (cardInstanceId: string) => {
+                const state = get();
+                const cost = 3; // 고정 비용 3
+
+                if (state.resources.production < cost) {
+                     set((s) => ({
+                        logs: [...s.logs, `❌ 생산력이 부족합니다. (필요: ${cost})`],
+                    }));
+                    return;
+                }
+
+                // 모든 덱에서 카드 찾기
+                let { drawPile, hand, discardPile } = state.deck;
+                let found = false;
+                let cardName = "";
+
+                // 1. Hand
+                const handIndex = hand.findIndex(c => c.instanceId === cardInstanceId);
+                if (handIndex !== -1) {
+                    cardName = hand[handIndex].name;
+                    hand = [...hand];
+                    hand.splice(handIndex, 1);
+                    found = true;
+                }
+
+                // 2. Draw Pile
+                if (!found) {
+                    const drawIndex = drawPile.findIndex(c => c.instanceId === cardInstanceId);
+                    if (drawIndex !== -1) {
+                        cardName = drawPile[drawIndex].name;
+                        drawPile = [...drawPile];
+                        drawPile.splice(drawIndex, 1);
+                        found = true;
+                    }
+                }
+
+                // 3. Discard Pile
+                if (!found) {
+                    const discardIndex = discardPile.findIndex(c => c.instanceId === cardInstanceId);
+                    if (discardIndex !== -1) {
+                        cardName = discardPile[discardIndex].name;
+                        discardPile = [...discardPile];
+                        discardPile.splice(discardIndex, 1);
+                        found = true;
+                    }
+                }
+
+                if (!found) {
+                    set((s) => ({
+                        logs: [...s.logs, `❌ 카드를 찾을 수 없습니다.`],
+                    }));
+                    return;
+                }
+
+                set({
+                    resources: {
+                        ...state.resources,
+                        production: state.resources.production - cost
+                    },
+                    deck: {
+                        drawPile,
+                        hand,
+                        discardPile
+                    },
+                    logs: [...state.logs, `🗑️ ${cardName} 카드를 영구적으로 제거했습니다.`],
+                });
+            },
+
+            // ========== 단계 관리 ==========
+
+            /**
+             * 시작 단계 실행 (1단계)
+             * - 생산력을 기본값으로 재설정
+             * - 구조물 패시브 효과 발동
+             * - **상점 자동 갱신 (무료)**
+             * - 카드 드로우
+             * - 위기 활성화
              */
             executeStartPhase: () => {
                 const state = get();
@@ -305,12 +490,12 @@ export const useGameStore = create<GameStore>()(
 
                 newLogs.push(`--- 턴 ${state.turn} 준비 단계 ---`);
 
-                // 1. Reset production to base value
+                // 1. 생산력을 기본값으로 재설정
                 let newProduction = GAME_CONSTANTS.BASE_PRODUCTION;
                 let newFood = state.resources.food;
                 let newScience = state.resources.science;
 
-                // 2. Trigger structure passives (turn_start)
+                // 2. 구조물 패시브 효과 발동 (턴 시작)
                 state.field.structures.forEach((structure) => {
                     if (structure.passive?.trigger === 'turn_start') {
                         const effectResult = structure.passive.effect(state);
@@ -325,16 +510,32 @@ export const useGameStore = create<GameStore>()(
 
                 newLogs.push(`⚡ 생산력 ${newProduction} 획득`);
 
-                // 3. Activate current crisis (from nextCrisis preview)
-                const currentCrisis = state.nextCrisis;
-                if (currentCrisis) {
-                    newLogs.push(`⚠️ 위기 발생: ${currentCrisis.name} - ${currentCrisis.description}`);
-                }
+            // 3. 상점 자동 갱신 (무료)
+                const newShopCards = getShopCards(state.era, 3);
+                newLogs.push(`🏪 상점에 새로운 물자가 들어왔습니다.`);
 
-                // 4. Generate next turn crisis preview (예고 시스템)
-                const nextCrisis = getRandomCrisisCard(state.era);
-                if (nextCrisis) {
-                    newLogs.push(`📢 다음 턴 위기 예고: ${nextCrisis.name}`);
+                // 4. 위기 쿨다운 체크 및 활성화
+                let currentCrisis: CrisisCardData | null = null;
+                let nextCrisis = state.nextCrisis;
+                let newCrisisCooldown = state.crisisCooldown;
+
+                if (newCrisisCooldown > 0) {
+                    // 쿨다운 중 - 위기 없음
+                    newCrisisCooldown--;
+                    newLogs.push(`🛡️ 평화로운 턴입니다. (다음 위기까지 ${newCrisisCooldown}턴)`);
+                } else {
+                    // 쿨다운 종료 - 위기 발생!
+                    currentCrisis = nextCrisis || getRandomCrisisCard(state.era);
+                    nextCrisis = getRandomCrisisCard(state.era);
+                    // 다음 위기까지 쿨다운 재설정 (2-5턴)
+                    newCrisisCooldown = Math.floor(Math.random() * (GAME_CONSTANTS.CRISIS_COOLDOWN_MAX - GAME_CONSTANTS.CRISIS_COOLDOWN_MIN + 1)) + GAME_CONSTANTS.CRISIS_COOLDOWN_MIN;
+                    
+                    if (currentCrisis) {
+                        newLogs.push(`⚠️ 위기 발생: ${currentCrisis.name} - ${currentCrisis.description}`);
+                    }
+                    if (nextCrisis) {
+                        newLogs.push(`📢 다음 위기 예고: ${nextCrisis.name}`);
+                    }
                 }
 
                 set({
@@ -345,11 +546,13 @@ export const useGameStore = create<GameStore>()(
                     },
                     currentCrisis: currentCrisis,
                     nextCrisis: nextCrisis,
+                    crisisCooldown: newCrisisCooldown,
+                    shopCards: newShopCards, // 상점 갱신 적용
                     phase: 'action',
                     logs: newLogs,
                 });
 
-                // 5. Draw cards
+                // 6. 카드 드로우
                 get().drawCard(GAME_CONSTANTS.HAND_SIZE);
 
                 set((s) => ({
@@ -358,7 +561,7 @@ export const useGameStore = create<GameStore>()(
             },
 
             /**
-             * Move to next phase
+             * 다음 단계로 이동
              * 행동 단계에서 "턴 종료" 버튼 클릭 시 호출
              */
             nextPhase: () => {
@@ -377,7 +580,7 @@ export const useGameStore = create<GameStore>()(
             },
 
             /**
-             * Resolve current crisis (Phase 3)
+             * 현재 위기 해결 (3단계)
              */
             resolveCrisis: () => {
                 const state = get();
@@ -396,7 +599,7 @@ export const useGameStore = create<GameStore>()(
 
                     let resolved = false;
 
-                    // --- Combat Crisis ---
+                    // --- 전투 위기 ---
                     if (crisis.requirement.type === 'combat') {
                         const totalAttack = state.field.units.reduce(
                             (sum, unit) => sum + (unit.stats?.attack || 0),
@@ -411,7 +614,7 @@ export const useGameStore = create<GameStore>()(
                             newLogs.push(`❌ 방어 실패! (아군 공격력 ${totalAttack} < 위기 공격력 ${requiredAttack})`);
                         }
                     }
-                    // --- Resource Crisis ---
+                    // --- 자원 위기 ---
                     else if (crisis.requirement.type === 'resource_check') {
                         const resource = crisis.requirement.resource!;
                         const requiredAmount = crisis.requirement.value;
@@ -425,7 +628,7 @@ export const useGameStore = create<GameStore>()(
                             newLogs.push(`❌ ${resource} 부족! (보유 ${currentAmount} < 필요 ${requiredAmount})`);
                         }
                     }
-                    // --- Tech Crisis ---
+                    // --- 기술 위기 ---
                     else if (crisis.requirement.type === 'tech') {
                         const techCards = [...state.deck.hand, ...state.deck.drawPile, ...state.deck.discardPile]
                             .filter(c => c.type === 'tech');
@@ -439,9 +642,9 @@ export const useGameStore = create<GameStore>()(
                         }
                     }
 
-                    // --- Apply Penalty or Reward ---
+                    // --- 페널티 또는 보상 적용 ---
                     if (!resolved) {
-                        // Apply Penalty
+                        // 페널티 적용
                         const penalty = crisis.penalty;
                         switch (penalty.type) {
                             case 'damage_hp':
@@ -449,19 +652,19 @@ export const useGameStore = create<GameStore>()(
                                 newLogs.push(`💥 피해 ${penalty.value} 입음!`);
                                 break;
                             case 'lose_resource':
-                                // Lose percentage of food (value = percentage)
+                                // 식량 비율 감소 (value = 비율)
                                 const lostFood = Math.floor(newResources.food * (penalty.value / 100));
                                 newResources.food -= lostFood;
                                 newLogs.push(`💸 식량 ${lostFood} 손실!`);
                                 break;
                             case 'destroy_structure':
-                                // Remove last structure
+                                // 마지막 구조물 제거
                                 if (state.field.structures.length > 0) {
                                     newLogs.push(`🔥 건물 파괴!`);
                                 }
                                 break;
                             case 'add_curse_card':
-                                // Add curse card to deck
+                                // 저주 카드를 덱에 추가
                                 const curseCard = getCurseCardById(penalty.targetId || 'curse_starvation');
                                 if (curseCard) {
                                     for (let i = 0; i < penalty.value; i++) {
@@ -474,7 +677,7 @@ export const useGameStore = create<GameStore>()(
                                 break;
                         }
                     } else {
-                        // Apply Reward (if any)
+                        // 보상 적용 (있는 경우)
                         if (crisis.reward) {
                             const reward = crisis.reward;
                             if (reward.type === 'gain_resource' && reward.resource && reward.value) {
@@ -485,7 +688,7 @@ export const useGameStore = create<GameStore>()(
                     }
                 }
 
-                // Check game over
+                // 게임 오버 확인
                 if (newHealth <= 0) {
                     newLogs.push('💀 체력 소진! 게임 오버.');
                     set({
@@ -506,17 +709,17 @@ export const useGameStore = create<GameStore>()(
                     phase: 'end',
                 });
 
-                // Proceed to End Phase
+                // 종료 단계로 진행
                 get().endTurn();
             },
 
             /**
-             * End Phase (Phase 4) - 통합된 턴 종료 처리
-             * 1. 위기 판정 (Crisis Resolution)
-             * 2. 유지비 지불 (Pay upkeep)
-             * 3. 기아 판정 (Starvation check)
-             * 4. 핸드 버리기 (Discard hand)
-             * 5. 턴 증가 (Increment turn)
+             * 종료 단계 (4단계) - 통합된 턴 종료 처리
+             * 1. 위기 판정 (위기 해결)
+             * 2. 유지비 지불
+             * 3. 기아 판정
+             * 4. 핸드 버리기
+             * 5. 턴 증가
              */
             endTurn: () => {
                 const currentState = get();
@@ -525,7 +728,7 @@ export const useGameStore = create<GameStore>()(
                 let newResources = { ...currentState.resources };
                 let newDeck = { ...currentState.deck };
 
-                // ========== 1. 위기 판정 (Crisis Resolution) ==========
+                // ========== 1. 위기 판정 (위기 해결) ==========
                 newLogs.push(`--- 위기 단계 ---`);
 
                 if (!currentState.currentCrisis) {
@@ -536,7 +739,7 @@ export const useGameStore = create<GameStore>()(
 
                     let resolved = false;
 
-                    // --- Combat Crisis ---
+                    // --- 전투 위기 ---
                     if (crisis.requirement.type === 'combat') {
                         const totalAttack = currentState.field.units.reduce(
                             (sum, unit) => sum + (unit.stats?.attack || 0),
@@ -551,7 +754,7 @@ export const useGameStore = create<GameStore>()(
                             newLogs.push(`❌ 방어 실패! (아군 공격력 ${totalAttack} < 위기 공격력 ${requiredAttack})`);
                         }
                     }
-                    // --- Resource Crisis ---
+                    // --- 자원 위기 ---
                     else if (crisis.requirement.type === 'resource_check') {
                         const resource = crisis.requirement.resource!;
                         const requiredAmount = crisis.requirement.value;
@@ -565,7 +768,7 @@ export const useGameStore = create<GameStore>()(
                             newLogs.push(`❌ ${resource} 부족! (보유 ${currentAmount} < 필요 ${requiredAmount})`);
                         }
                     }
-                    // --- Tech Crisis ---
+                    // --- 기술 위기 ---
                     else if (crisis.requirement.type === 'tech') {
                         const techCards = [...currentState.deck.hand, ...currentState.deck.drawPile, ...currentState.deck.discardPile]
                             .filter(c => c.type === 'tech');
@@ -579,7 +782,7 @@ export const useGameStore = create<GameStore>()(
                         }
                     }
 
-                    // --- Apply Penalty or Reward ---
+                    // --- 페널티 또는 보상 적용 ---
                     if (!resolved) {
                         const penalty = crisis.penalty;
                         switch (penalty.type) {
@@ -621,7 +824,7 @@ export const useGameStore = create<GameStore>()(
                     }
                 }
 
-                // Check game over from crisis
+                // 위기로 인한 게임 오버 확인
                 if (newHealth <= 0) {
                     newLogs.push('💀 체력 소진! 게임 오버.');
                     set({
@@ -633,10 +836,10 @@ export const useGameStore = create<GameStore>()(
                     return;
                 }
 
-                // ========== 2. 정산 단계 (End Phase) ==========
+                // ========== 2. 정산 단계 (종료 단계) ==========
                 newLogs.push(`--- 정산 단계 ---`);
 
-                // --- 유지비 계산 (Upkeep) ---
+                // --- 유지비 계산 ---
                 const unitUpkeep = currentState.field.units.reduce(
                     (sum, unit) => sum + (unit.stats?.upkeep || 1),
                     0
@@ -649,7 +852,7 @@ export const useGameStore = create<GameStore>()(
 
                 let newFood = newResources.food - totalUpkeep;
 
-                // --- 기아 판정 (Starvation Check) ---
+                // --- 기아 판정 ---
                 if (newFood < 0) {
                     const deficit = Math.abs(newFood);
                     const damage = deficit * GAME_CONSTANTS.STARVATION_DAMAGE;
@@ -660,7 +863,7 @@ export const useGameStore = create<GameStore>()(
                     newLogs.push(`🍖 유지비 ${totalUpkeep} 식량 소모.`);
                 }
 
-                // Check game over from starvation
+                // 기아로 인한 게임 오버 확인
                 if (newHealth <= 0) {
                     newLogs.push('💀 체력 소진! 게임 오버.');
                     set({
@@ -698,19 +901,19 @@ export const useGameStore = create<GameStore>()(
                     logs: newLogs,
                 });
 
-                // Start next turn
+                // 다음 턴 시작
                 get().executeStartPhase();
             },
 
             /**
-             * Advance to next era
+             * 다음 시대로 발전
              */
             advanceEra: () => {
                 const state = get();
                 const currentEra = state.era;
 
                 if (currentEra >= 5) {
-                    // Victory condition: Space age reached
+                    // 승리 조건: 우주 시대 도달
                     set((s) => ({
                         status: 'victory',
                         logs: [...s.logs, '🎉 우주 시대에 도달했습니다! 승리!'],
@@ -738,7 +941,7 @@ export const useGameStore = create<GameStore>()(
             },
 
             /**
-             * Shuffle the deck (draw pile)
+             * 덱(뽑을 덱)을 섞음
              */
             shuffleDeck: () => {
                 set((state) => ({
@@ -751,16 +954,16 @@ export const useGameStore = create<GameStore>()(
             },
 
             /**
-             * Add a log message
+             * 로그 메시지 추가
              */
             addLog: (message: string) => {
                 set((state) => ({
-                    logs: [...state.logs, message].slice(-50), // Keep last 50 logs
+                    logs: [...state.logs, message].slice(-50), // 최근 50개 로그 유지
                 }));
             },
 
             /**
-             * Cheat functions for debugging
+             * 디버깅용 치트 함수
              */
             cheat: {
                 addResources: (amount: number) => {
@@ -778,6 +981,6 @@ export const useGameStore = create<GameStore>()(
                 },
             },
         }),
-        { name: 'CivDeckBuilder' } // DevTools name
+        { name: 'CivDeckBuilder' } // DevTools 이름
     )
 );

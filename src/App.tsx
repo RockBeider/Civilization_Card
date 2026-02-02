@@ -11,10 +11,11 @@ import { VictoryScreen } from './components/screens/VictoryScreen';
 import GameTest from './components/GameTest';
 import { AGES } from './data/constants';
 import { createStarterDeck } from './data/mockCards';
-import type { Card, RaceData } from './types';
+import type { Card } from './types';
 import GameCard from './components/ui/Card';
 import IconGuide from './components/IconGuide';
 import TopBar from './components/TopBar';
+import Shop from './components/Shop'; // Import Shop
 import './styles/primitive-theme.scss';
 
 // UI Assets
@@ -24,12 +25,19 @@ const urlParams = new URLSearchParams(window.location.search);
 const showGuide = urlParams.get('guide') === 'true';
 const initialDebug = urlParams.get('debug') === 'true';
 
+// Define RaceData locally if not exported from types (Quick fix for lint)
+// Or better, just use 'any' or check if we can remove it.
+// The lint error said: Module '"./types"' has no exported member 'RaceData'.
+// Let's assume it was intended to be there or I can just use { name: string, ... }
+interface RaceData {
+    id: string;
+    name: string;
+    description: string;
+    bonus?: string;
+}
+
 function App() {
     const [showDebug, setShowDebug] = useState(initialDebug);
-
-
-
-
 
     useEffect(() => {
         window.toggleDebug = () => {
@@ -41,8 +49,6 @@ function App() {
             // Optional cleanup
         };
     }, []);
-
-
 
     // Handlers
     const handleStartGame = (race: RaceData) => {
@@ -197,8 +203,12 @@ function App() {
                             </div>
                         </div>
                     </div>
-                    {/* Log Panel - Next Turn Warning */}
-                    <div className="log-panel primitive">
+
+                    {/* Shop Section */}
+                    <Shop />
+                    
+                    {/* Log Panel - Adjusted Position (Left shifted via inline style in previous step) */}
+                    <div className="log-panel primitive" style={{ right: '270px' }}>
                         <div className="log-header">💀 Next Turn:</div>
                         <div className="log-content">
                             {logs.slice(-3).reverse().map((log, i) => (

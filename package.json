@@ -8,6 +8,7 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
+    "simulate": "tsx scripts/simulate_core.ts",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d dist"
   },
@@ -24,6 +25,7 @@
     "@vitejs/plugin-react": "^4.2.0",
     "gh-pages": "^6.3.0",
     "sass": "^1.69.0",
+    "tsx": "^4.21.0",
     "typescript": "^5.9.3",
     "vite": "^5.0.0"
   }

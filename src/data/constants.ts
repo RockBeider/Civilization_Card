@@ -19,7 +19,7 @@ import raceAtlantean from '../assets/race_atlantean.png';
 // Import Cards
 // Note: In a real scenario we might need to be careful about circular dependencies if Cards import constants, but they don't currently.
 import { CARD_POOLS } from './cards';
-import { RaceData, AgeData } from '../types';
+import { RaceData, AgeData } from '../types/index';
 
 /**
  * 게임 밸런싱 상수
@@ -54,6 +54,10 @@ export const GAME_CONSTANTS = {
 
     // 초기 과학
     STARTING_SCIENCE: 0,
+
+    // 위기 발생 간격 (턴)
+    CRISIS_COOLDOWN_MIN: 2,
+    CRISIS_COOLDOWN_MAX: 5,
 } as const;
 
 
