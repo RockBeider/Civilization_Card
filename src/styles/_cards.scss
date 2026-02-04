@@ -4,7 +4,6 @@
   width: 140px;
   height: 200px;
   background-color: #2a2a2a;
-  border: 2px solid #444;
   border-radius: 8px;
   display: flex;
   flex-direction: column;
@@ -14,15 +13,246 @@
   cursor: pointer;
   user-select: none;
   color: #eee;
+  box-sizing: border-box;
+  filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.8));
+
+  // --- Era Styles ---
+
+  // 1. Ancient / Primitive (Hearthstone Style)
+  &.style-ancient {
+    background: radial-gradient(circle at center, #4d4d4d, #3d3d3d); // Stone texture gradient
+    border: 4px solid #5a4a42; // Wood/Leather like border
+    border-radius: 12px;
+    box-shadow:
+      inset 0 0 10px rgba(0, 0, 0, 0.8), // Inner shadow for depth
+      0 4px 8px rgba(0, 0, 0, 0.5); // Outer drop shadow
+
+    .card-header {
+      background: rgba(60, 40, 30, 0.9);
+      border: 1px solid #8b5a2b;
+      border-radius: 4px;
+      padding: 4px;
+      margin-top: -12px; // Pop out effect
+      margin-bottom: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+      text-shadow: 1px 1px 2px black;
+    }
+
+    .card-image-placeholder {
+      border: 3px solid #8b5a2b;
+      border-radius: 50% 50% 10px 10px; // Arch shape
+      background: #222;
+      box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.8);
+    }
+
+    .card-body {
+      background: rgba(255, 248, 220, 0.1); // Parchment-ish tint
+      border-radius: 4px;
+      padding: 4px;
+    }
+
+    // Type specific implementation for Ancient
+    &.card-type-action {
+      border-color: #4a6fa5;
+    }
+
+    // Blue stone
+    &.card-type-structure {
+      border-color: #8b5a2b;
+    }
+
+    // Wood
+    &.card-type-unit {
+      border-color: #5a4a42;
+    }
+
+    // Leather
+    &.card-type-tech {
+      border-color: #6a4a8b;
+    }
+
+    // Mystic stone
+    &.card-type-crisis {
+      border-color: #8b0000;
+    }
+
+    // Blood stone
+  }
+
+  // 2. Medieval / Renaissance (Slay the Spire Style)
+  &.style-medieval {
+    background-color: #f4e4bc; // Parchment color
+    color: #333; // Dark text for readability
+    border: 2px solid #555;
+    border-radius: 6px;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+    font-family: 'Times New Roman', serif; // Serif font for classic look
+
+    .card-header {
+      background: transparent;
+      border-bottom: 2px solid #555;
+      padding-bottom: 4px;
+      margin-bottom: 4px;
+      color: #000;
+      justify-content: center; // Center title
+      position: relative;
+    }
+
+    .card-cost {
+      position: absolute;
+      left: -12px;
+      top: -12px;
+      background: #444;
+      color: #fff;
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-weight: bold;
+      box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.4);
+    }
+
+    .card-image-placeholder {
+      border: 1px solid #555;
+      background: #fff; // clean background for illustration
+      opacity: 0.9;
+    }
+
+    .card-body {
+      background: rgba(255, 255, 255, 0.3);
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      border-radius: 4px;
+      padding: 4px;
+      font-size: 0.7rem;
+      line-height: 1.2;
+    }
+
+    // Banner color based on type
+    &.card-type-action {
+      background-color: #aebed6;
+    }
+
+    // Light Blue
+    &.card-type-structure {
+      background-color: #d6aea9;
+    }
+
+    // Light Red
+    &.card-type-unit {
+      background-color: #c0d6ae;
+    }
+
+    // Light Green
+    &.card-type-tech {
+      background-color: #cfaed6;
+    }
+
+    // Light Purple
+    &.card-type-crisis {
+      background-color: #d69e9e;
+    }
+
+    // Warning Red
+  }
+
+  // 3. Industrial / Space (Futuristic Style)
+  &.style-future {
+    background: rgba(20, 30, 40, 0.85); // Dark glass
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(0, 255, 255, 0.3);
+    border-radius: 4px;
+    color: #e0faff;
+    font-family: 'Courier New', monospace; // Tech font
+    box-shadow: 0 0 5px rgba(0, 255, 255, 0.2);
+
+    .card-header {
+      background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.1), transparent);
+      border-bottom: 1px solid rgba(0, 255, 255, 0.5);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .card-cost {
+      background: rgba(0, 0, 0, 0.8);
+      border: 1px solid #0ff;
+      color: #0ff;
+      box-shadow: 0 0 5px #0ff;
+    }
+
+    .card-image-placeholder {
+      border: 1px solid rgba(0, 255, 255, 0.2);
+      background: rgba(0, 0, 0, 0.5);
+      position: relative;
+      overflow: hidden;
+
+      &::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.2), transparent);
+        animation: scanline 3s infinite linear;
+      }
+    }
+
+    .card-body {
+      border-top: 1px solid rgba(0, 255, 255, 0.2);
+      background: linear-gradient(180deg, rgba(0, 0, 0, 0.2) 0%, rgba(0, 20, 30, 0.5) 100%);
+    }
+
+    // Neon borders based on type
+    &.card-type-action {
+      border-color: #00ffff;
+      box-shadow: 0 0 5px #00ffff;
+    }
+
+    &.card-type-structure {
+      border-color: #ff00ff;
+      box-shadow: 0 0 5px #ff00ff;
+    }
+
+    &.card-type-unit {
+      border-color: #00ff00;
+      box-shadow: 0 0 5px #00ff00;
+    }
+
+    &.card-type-tech {
+      border-color: #aa00ff;
+      box-shadow: 0 0 5px #aa00ff;
+    }
+
+    &.card-type-crisis {
+      border-color: #ff0000;
+      box-shadow: 0 0 8px #ff0000;
+    }
+  }
+
+
+  // --- Common Logic ---
 
   &.playable {
-    border-color: #4caf50;
-    box-shadow: 0 0 10px rgba(76, 175, 80, 0.3);
 
+    // Override border color for playable state if needed, or add glow
     &:hover {
       transform: translateY(-10px) scale(1.05);
       z-index: 10;
-      box-shadow: 0 0 15px rgba(76, 175, 80, 0.5);
+
+      // Era specific hover effects
+      &.style-ancient {
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.6);
+      }
+
+      &.style-medieval {
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+      }
+
+      &.style-future {
+        box-shadow: 0 0 20px rgba(0, 255, 255, 0.6);
+      }
     }
   }
 
@@ -30,19 +260,6 @@
     opacity: 0.6;
     cursor: not-allowed;
     filter: grayscale(0.8);
-  }
-
-  // Types
-  &.card-type-action {
-    border-top: 4px solid #4facfe;
-  }
-
-  &.card-type-structure {
-    border-top: 4px solid #fa709a;
-  }
-
-  &.card-type-crisis {
-    border-top: 4px solid #ff0844;
   }
 }
 
@@ -119,14 +336,31 @@
   justify-content: center;
   align-items: flex-end;
   pointer-events: auto;
+  gap: -20px;
 }
 
 .hand-card-wrapper {
-  margin: 0 -30px; // Overlap cards
   transition: margin 0.3s;
 
   &:hover {
     margin: 0 5px; // Spread on hover
+  }
+
+  &.playing {
+    animation: play-card-anim 0.5s ease-out forwards;
+    pointer-events: none;
+  }
+}
+
+@keyframes play-card-anim {
+  0% {
+    transform: translateY(0) scale(1.05);
+    opacity: 1;
+  }
+
+  100% {
+    transform: translateY(-80px) scale(1.1); // Move up significantly
+    opacity: 0;
   }
 }
 
@@ -153,5 +387,15 @@
     .card-image-placeholder {
       flex: 0.6;
     }
+  }
+}
+
+@keyframes scanline {
+  0% {
+    left: -100%;
+  }
+
+  100% {
+    left: 200%;
   }
 }

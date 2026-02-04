@@ -1,4 +1,3 @@
-import { useGameStore } from '../../store';
 import bgImage from '../../assets/race_selection_bg.png';
 
 interface StartScreenProps {

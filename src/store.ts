@@ -4,7 +4,7 @@
 
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
-import type { Card, GameState, GameStore, DeckState, FieldState, Resources, CrisisCardData, PhaseType } from './types';
+import type { Card, GameState, GameStore, DeckState, FieldState, Resources, PhaseType } from './types';
 import { GAME_CONSTANTS } from './data/constants';
 import { getRandomCrisisCard, getCurseCardById, CARDS_BY_ERA } from './data/cards';
 
@@ -35,16 +35,16 @@ const getShopCards = (currentEra: number, count: number): Card[] => {
 
     // 시대별 카드 풀 준비
     const currentEraCards = CARDS_BY_ERA.find(g => g.era === (currentEra === 0 ? 'Primitive' :
-                                                            currentEra === 1 ? 'Ancient' :
-                                                            currentEra === 2 ? 'Medieval' :
-                                                            currentEra === 3 ? 'Renaissance' :
-                                                            currentEra === 4 ? 'Industrial' : 'Space'))?.cards || [];
+        currentEra === 1 ? 'Ancient' :
+            currentEra === 2 ? 'Medieval' :
+                currentEra === 3 ? 'Renaissance' :
+                    currentEra === 4 ? 'Industrial' : 'Space'))?.cards || [];
 
     const prevEraCards = currentEra > 0 ? CARDS_BY_ERA.find(g => g.era === (currentEra - 1 === 0 ? 'Primitive' :
-                                                                           currentEra - 1 === 1 ? 'Ancient' :
-                                                                           currentEra - 1 === 2 ? 'Medieval' :
-                                                                           currentEra - 1 === 3 ? 'Renaissance' :
-                                                                           currentEra - 1 === 4 ? 'Industrial' : 'Space'))?.cards || [] : [];
+        currentEra - 1 === 1 ? 'Ancient' :
+            currentEra - 1 === 2 ? 'Medieval' :
+                currentEra - 1 === 3 ? 'Renaissance' :
+                    currentEra - 1 === 4 ? 'Industrial' : 'Space'))?.cards || [] : [];
 
     // 각 슬롯마다 확률적으로 카드 선택
     for (let i = 0; i < count; i++) {
@@ -411,7 +411,7 @@ export const useGameStore = create<GameStore>()(
                 const cost = 3; // 고정 비용 3
 
                 if (state.resources.production < cost) {
-                     set((s) => ({
+                    set((s) => ({
                         logs: [...s.logs, `❌ 생산력이 부족합니다. (필요: ${cost})`],
                     }));
                     return;
@@ -510,7 +510,7 @@ export const useGameStore = create<GameStore>()(
 
                 newLogs.push(`⚡ 생산력 ${newProduction} 획득`);
 
-            // 3. 상점 자동 갱신 (무료)
+                // 3. 상점 자동 갱신 (무료)
                 const newShopCards = getShopCards(state.era, 3);
                 newLogs.push(`🏪 상점에 새로운 물자가 들어왔습니다.`);
 
@@ -529,7 +529,7 @@ export const useGameStore = create<GameStore>()(
                     nextCrisis = getRandomCrisisCard(state.era);
                     // 다음 위기까지 쿨다운 재설정 (2-5턴)
                     newCrisisCooldown = Math.floor(Math.random() * (GAME_CONSTANTS.CRISIS_COOLDOWN_MAX - GAME_CONSTANTS.CRISIS_COOLDOWN_MIN + 1)) + GAME_CONSTANTS.CRISIS_COOLDOWN_MIN;
-                    
+
                     if (currentCrisis) {
                         newLogs.push(`⚠️ 위기 발생: ${currentCrisis.name} - ${currentCrisis.description}`);
                     }
@@ -552,11 +552,17 @@ export const useGameStore = create<GameStore>()(
                     logs: newLogs,
                 });
 
-                // 6. 카드 드로우
-                get().drawCard(GAME_CONSTANTS.HAND_SIZE);
+                // 5. Draw cards (생산력 비례 드로우)
+                // HandSize = 5(기본) + floor(TurnProduction / 10), 최대 10장
+                const baseHandSize = GAME_CONSTANTS.HAND_SIZE; // 5
+                const bonusCards = Math.floor(newProduction / 10);
+                const maxHandSize = 10;
+                const totalHandSize = Math.min(baseHandSize + bonusCards, maxHandSize);
+
+                get().drawCard(totalHandSize);
 
                 set((s) => ({
-                    logs: [...s.logs, `🃏 카드 ${GAME_CONSTANTS.HAND_SIZE}장 드로우. 행동 단계 시작!`],
+                    logs: [...s.logs, `🃏 카드 ${totalHandSize}장 드로우 (기본 ${baseHandSize} + 보너스 ${bonusCards}${totalHandSize >= maxHandSize ? ', 최대' : ''}). 행동 단계 시작!`],
                 }));
             },
 

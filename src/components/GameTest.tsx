@@ -4,8 +4,7 @@
 
 import React from 'react';
 import { useGameStore } from '../store';
-import { mockCards, createStarterDeck } from '../data/mockCards';
-import type { Card } from '../types';
+import { createStarterDeck } from '../data/mockCards';
 
 interface GameTestProps {
     onClose?: () => void;
@@ -31,7 +30,7 @@ const GameTest: React.FC<GameTestProps> = ({ onClose }) => {
 
     const handleStartGame = () => {
         const starterDeck = createStarterDeck();
-        startGame(starterDeck);
+        startGame(starterDeck, 'debug_race');
     };
 
     return (

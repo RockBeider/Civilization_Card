@@ -3,14 +3,14 @@
 // ============================================================
 
 import React from 'react';
-import { Home, Save, Volume2, VolumeX, Heart } from './ui/Icons';
-import { CastleTowerIcon } from './ui/GameIcons';
+import { Home, Save, Volume2, VolumeX } from './ui/Icons';
 import { AGES, RACES } from '../data/constants';
 
-// Resource Icons (PNG)
-import iconProduction from '../assets/icon_production.png';
-import iconFood from '../assets/icon_food.png';
-import iconScience from '../assets/icon_science.png';
+// Resource Icons (Modern / Civ VII Style)
+import iconProduction from '../assets/icon_production_modern.png';
+import iconFood from '../assets/icon_food_modern.png';
+import iconScience from '../assets/icon_science_modern.png';
+import iconHealth from '../assets/icon_health_modern.png';
 
 interface TopBarProps {
     turn: number;
@@ -46,54 +46,54 @@ const TopBar: React.FC<TopBarProps> = ({
     return (
         <div className="top-bar-wrapper">
             <div className="top-bar-content top-bar">
-                <div className="race-info">
-                    {playerRace ? (
-                        <img
-                            src={RACES.find(r => r.name === playerRace)?.img}
-                            alt={playerRace}
-                            className="race-icon"
-                        />
-                    ) : (
-                        <div className="race-placeholder">?</div>
-                    )}
-                </div>
-                <div className="turn-info">
-                    <CastleTowerIcon size={40} className="era-icon" />
-                    <div className="turn-badge">{turn}/{turn}</div>
-                    <div className="era-name">Turn {turn}: {AGES[currentAge]?.name || 'Medieval Era'}</div>
-                </div>
-                <div className="resource-bar">
-                    <div className="resource-card primitive">
-                        <img src={iconProduction} alt="Production" style={{ width: 24, height: 24 }} />
-                        <span className="resource-value">{resources.production}</span>
+                {/* LEFT: Resources */}
+                <div className="top-bar-left">
+                    <div className="race-health">
+                        {playerRace && (
+                            <img
+                                src={RACES.find(r => r.name === playerRace)?.img}
+                                alt={playerRace}
+                                className="race-icon-small"
+                            />
+                        )}
                     </div>
-                    <div className="resource-card primitive">
-                        <img src={iconFood} alt="Food" style={{ width: 24, height: 24 }} />
-                        <span className="resource-value">{resources.food}</span>
-                    </div>
-                    <div className="resource-card primitive">
-                        <img src={iconScience} alt="Science" style={{ width: 24, height: 24 }} />
-                        <span className="resource-value">{resources.science}/100</span>
-                    </div>
-                    <div className="resource-card primitive">
-                        <Heart size={20} className="icon-text-red" />
+                    <div className="resource-card">
+                        <img src={iconHealth} alt="Health" className="resource-icon" />
                         <span className="resource-value">{playerStats.health}</span>
                     </div>
+                    <div className="turn-info">
+                        <span className="era-name">Turn <span className="highlight">{turn}</span> | {AGES[currentAge]?.name || 'Medieval Era'}</span>
+                    </div>
+                    <div className="resource-bar">
+                        <div className="resource-card">
+                            <img src={iconProduction} alt="Production" className="resource-icon" />
+                            <span className="resource-value">{resources.production}</span>
+                        </div>
+                        <div className="resource-card">
+                            <img src={iconFood} alt="Food" className="resource-icon" />
+                            <span className="resource-value">{resources.food}</span>
+                        </div>
+                        <div className="resource-card">
+                            <img src={iconScience} alt="Science" className="resource-icon" />
+                            <span className="resource-value">{resources.science}</span>
+                        </div>
+
+                    </div>
                 </div>
-                <div className="control-buttons">
-                    <button onClick={onQuit} title="메인으로" className="control-btn primitive">
-                        <Home size={20} />
-                    </button>
-                    <button
-                        onClick={onSave}
-                        title="저장하기"
-                        className="control-btn primitive"
-                    >
-                        <Save size={20} />
-                    </button>
-                    <button onClick={onToggleMute} title="음소거" className="control-btn primitive">
-                        {isMuted ? <VolumeX size={20} /> : <Volume2 size={20} />}
-                    </button>
+
+                {/* RIGHT: Turn Info + Controls */}
+                <div className="top-bar-right">
+                    <div className="control-buttons">
+                        <button onClick={onQuit} title="메인으로" className="control-btn modern">
+                            <Home size={18} />
+                        </button>
+                        <button onClick={onSave} title="저장하기" className="control-btn modern">
+                            <Save size={18} />
+                        </button>
+                        <button onClick={onToggleMute} title="음소거" className="control-btn modern">
+                            {isMuted ? <VolumeX size={18} /> : <Volume2 size={18} />}
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

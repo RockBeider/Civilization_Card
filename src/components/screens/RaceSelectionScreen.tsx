@@ -5,10 +5,9 @@ import { RaceData } from '../../types';
 
 interface RaceSelectionScreenProps {
     onSelect: (race: RaceData) => void;
-    onLoad: () => void;
 }
 
-export function RaceSelectionScreen({ onSelect, onLoad }: RaceSelectionScreenProps) {
+export function RaceSelectionScreen({ onSelect }: RaceSelectionScreenProps) {
     const getDeckSummary = (deckIds: string[]) => {
         const counts: Record<string, number> = {};
         deckIds.forEach(id => {
