@@ -345,6 +345,23 @@
   &:hover {
     margin: 0 5px; // Spread on hover
   }
+
+  &.playing {
+    animation: play-card-anim 0.5s ease-out forwards;
+    pointer-events: none;
+  }
+}
+
+@keyframes play-card-anim {
+  0% {
+    transform: translateY(0) scale(1.05);
+    opacity: 1;
+  }
+
+  100% {
+    transform: translateY(-80px) scale(1.1); // Move up significantly
+    opacity: 0;
+  }
 }
 
 // Field View

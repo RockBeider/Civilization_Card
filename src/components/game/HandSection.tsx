@@ -2,6 +2,7 @@
 // HandSection.tsx - Hand Area Component (Draw Pile, Hand Cards, Discard)
 // ============================================================
 
+import { useState } from 'react';
 import type { Card, Resources } from '../../types';
 import GameCard from '../ui/Card';
 
@@ -25,6 +26,19 @@ const HandSection: React.FC<HandSectionProps> = ({
     onPlayCard,
     onEndTurn,
 }) => {
+    const [playingCardId, setPlayingCardId] = useState<string | null>(null);
+
+    const handleCardClick = (card: Card) => {
+        if (!card.instanceId) return;
+        setPlayingCardId(card.instanceId);
+
+        // Wait for animation to finish before actually playing the card
+        setTimeout(() => {
+            onPlayCard(card);
+            setPlayingCardId(null);
+        }, 500);
+    };
+
     return (
         <div className="hand-section">
             {/* Draw Pile */}
@@ -53,14 +67,16 @@ const HandSection: React.FC<HandSectionProps> = ({
                         if (cost.food && resources.food < cost.food) isPlayable = false;
                         if (cost.science && resources.science < cost.science) isPlayable = false;
 
+                        const isPlaying = playingCardId === card.instanceId;
+
                         return (
                             <div
                                 key={card.instanceId || index}
-                                className="hand-card-wrapper"
+                                className={`hand-card-wrapper ${isPlaying ? 'playing' : ''}`}
                             >
                                 <GameCard
                                     card={card}
-                                    onClick={() => onPlayCard(card)}
+                                    onClick={() => handleCardClick(card)}
                                     isPlayable={isPlayable}
                                 />
                             </div>
