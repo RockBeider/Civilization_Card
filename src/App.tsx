@@ -17,7 +17,7 @@ import TopBar from './components/TopBar';
 import FieldSection from './components/game/FieldSection';
 import HandSection from './components/game/HandSection';
 import Shop from './components/Shop'; // Import Shop
-import './styles/primitive-theme.scss';
+import './styles/main.scss';
 // URL 파라미터로 가이드 페이지 접근 체크
 const urlParams = new URLSearchParams(window.location.search);
 const showGuide = urlParams.get('guide') === 'true';

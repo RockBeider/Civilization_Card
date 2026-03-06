@@ -215,9 +215,7 @@
         left: 50%;
         transform: translateX(-50%);
         z-index: 10;
-        background: url('../assets/ui_ribbon_gold.png') no-repeat center; // Fallback or use CSS shape
-        background-size: contain;
-        background-color: rgba(0, 0, 0, 0.6); // Tmp background
+        background-color: rgba(0, 0, 0, 0.6);
         padding: $spacing-1 $spacing-4;
         border-radius: 0 0 $radius-md $radius-md;
         border: 1px solid rgba(255, 215, 0, 0.4);
