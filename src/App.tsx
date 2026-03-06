@@ -11,28 +11,17 @@ import { VictoryScreen } from './components/screens/VictoryScreen';
 import GameTest from './components/GameTest';
 import { createStarterDeck } from './data/mockCards';
 import type { Card } from './types';
-import GameCard from './components/ui/Card';
 import IconGuide from './components/IconGuide';
 import TopBar from './components/TopBar';
 import FieldSection from './components/game/FieldSection';
 import HandSection from './components/game/HandSection';
-import Shop from './components/Shop'; // Import Shop
 import './styles/main.scss';
 // URL 파라미터로 가이드 페이지 접근 체크
 const urlParams = new URLSearchParams(window.location.search);
 const showGuide = urlParams.get('guide') === 'true';
 const initialDebug = urlParams.get('debug') === 'true';
 
-// Define RaceData locally if not exported from types (Quick fix for lint)
-// Or better, just use 'any' or check if we can remove it.
-// The lint error said: Module '"./types"' has no exported member 'RaceData'.
-// Let's assume it was intended to be there or I can just use { name: string, ... }
-interface RaceData {
-    id: string;
-    name: string;
-    description: string;
-    bonus?: string;
-}
+
 
 function App() {
     const [showDebug, setShowDebug] = useState(initialDebug);
@@ -49,7 +38,7 @@ function App() {
     }, []);
 
     // Handlers
-    const handleStartGame = (race: RaceData) => {
+    const handleStartGame = (race: { id: string; name: string }) => {
         initAudio();
         const starterDeck = createStarterDeck(); // TODO: Use race-specific deck
         startGame(starterDeck, race.name);

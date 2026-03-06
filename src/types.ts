@@ -172,26 +172,6 @@ export interface AgeData {
     cardPool: string[]; // List of card IDs
 }
 
-// --- Enemy Data Definition ---
-export interface EnemyData {
-    id: string;
-    name: string;
-    type: string;
-    stats: {
-        health: number;
-        attack: number;
-    };
-    effect?: {
-        on_spawn?: string;
-        on_turn_end?: string;
-    };
-    reward?: {
-        resource: ResourceType;
-        value: number;
-    };
-    era: number;
-}
-
 
 // --- Deck State ---
 export interface DeckState {
@@ -296,26 +276,3 @@ export interface GameActions {
 // --- Combined Store Type ---
 export type GameStore = GameState & GameActions;
 
-// --- Data Types (Constants) ---
-export interface RaceData {
-    id: string;
-    name: string;
-    desc: string;
-    bonus: {
-        food: number;
-        prod: number;
-        sci: number;
-        energy: number;
-    };
-    img: string;
-    starter_deck: string[];
-}
-
-export interface AgeData {
-    id: number;
-    name: string;
-    color: string;
-    img: string;
-    groundImg: string;
-    cardPool: string[];
-}

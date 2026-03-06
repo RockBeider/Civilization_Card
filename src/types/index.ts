@@ -80,21 +80,3 @@ export interface AgeData {
     cardPool: string[];
 }
 
-export interface EnemyData {
-    id: string;
-    name: string;
-    type: string;
-    stats: {
-        health: number;
-        attack: number;
-    };
-    effect: {
-        on_spawn?: string;
-        on_turn_end?: string;
-    };
-    reward?: {
-        resource: string;
-        value: number;
-    };
-    era: number;
-}
