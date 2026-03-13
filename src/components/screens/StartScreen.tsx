@@ -3,9 +3,10 @@ import bgImage from '../../assets/race_selection_bg.png';
 interface StartScreenProps {
     onStartGame: () => void;
     onContinue?: () => void;
+    onLibrary: () => void;
 }
 
-export function StartScreen({ onStartGame, onContinue }: StartScreenProps) {
+export function StartScreen({ onStartGame, onContinue, onLibrary }: StartScreenProps) {
     return (
         <div className="start-screen" style={{
             backgroundImage: `linear-gradient(rgba(15, 23, 42, 0.7), rgba(15, 23, 42, 0.7)), url(${bgImage})`,
@@ -29,6 +30,12 @@ export function StartScreen({ onStartGame, onContinue }: StartScreenProps) {
                     // If no continue handler or save implementation, maybe show alert or disable
                     >
                         Continue
+                    </button>
+                    <button
+                        onClick={onLibrary}
+                        className="start-menu-btn"
+                    >
+                        카드 도감
                     </button>
                     <button
                         className="start-menu-btn disabled"

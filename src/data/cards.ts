@@ -296,6 +296,71 @@ export const getRandomCrisisCard = (era: number): CrisisCardData | null => {
     return pool[Math.floor(Math.random() * pool.length)];
 };
 
+// ============================================================
+// 시대 발전 카드 — 상점에서 구매하여 시대 진행
+// ============================================================
+const ERA_NAMES = ['원시', '고대', '중세', '르네상스', '산업', '우주'];
+
+export const ERA_ADVANCE_CARDS: Card[] = [
+    {
+        id: "era_advance_0",
+        name: "고대 문명으로의 도약",
+        type: "action",
+        era: 0,
+        cost: { food: 15, production: 10, science: 5 },
+        description: `${ERA_NAMES[0]} 시대에서 ${ERA_NAMES[1]} 시대로 발전합니다.`,
+        effect: () => ({ _eraAdvance: true } as any),
+        unplayable: true, // 구매 즉시 효과, 사용 불가
+    },
+    {
+        id: "era_advance_1",
+        name: "중세 봉건 사회 진입",
+        type: "action",
+        era: 1,
+        cost: { food: 30, production: 25, science: 20 },
+        description: `${ERA_NAMES[1]} 시대에서 ${ERA_NAMES[2]} 시대로 발전합니다.`,
+        effect: () => ({ _eraAdvance: true } as any),
+        unplayable: true,
+    },
+    {
+        id: "era_advance_2",
+        name: "르네상스의 물결",
+        type: "action",
+        era: 2,
+        cost: { food: 60, production: 50, science: 40 },
+        description: `${ERA_NAMES[2]} 시대에서 ${ERA_NAMES[3]} 시대로 발전합니다.`,
+        effect: () => ({ _eraAdvance: true } as any),
+        unplayable: true,
+    },
+    {
+        id: "era_advance_3",
+        name: "산업 혁명의 시작",
+        type: "action",
+        era: 3,
+        cost: { food: 120, production: 100, science: 80 },
+        description: `${ERA_NAMES[3]} 시대에서 ${ERA_NAMES[4]} 시대로 발전합니다.`,
+        effect: () => ({ _eraAdvance: true } as any),
+        unplayable: true,
+    },
+    {
+        id: "era_advance_4",
+        name: "우주로의 진출",
+        type: "action",
+        era: 4,
+        cost: { food: 250, production: 200, science: 150 },
+        description: `${ERA_NAMES[4]} 시대에서 ${ERA_NAMES[5]} 시대로 발전합니다.`,
+        effect: () => ({ _eraAdvance: true } as any),
+        unplayable: true,
+    },
+];
+
+// 현재 시대에 맞는 시대 발전 카드 반환
+export const getEraAdvanceCard = (currentEra: number): Card | null => {
+    if (currentEra >= 5) return null; // 우주 시대면 더 이상 발전 없음
+    const card = ERA_ADVANCE_CARDS.find(c => c.era === currentEra);
+    return card ? { ...card, instanceId: 'era_advance_' + currentEra } : null;
+};
+
 
 // 시대별 카드 데이터
 export interface EraCardGroup {
@@ -314,8 +379,8 @@ export const CARDS_BY_ERA: EraCardGroup[] = [
                 type: "action",
                 era: 0,
                 cost: { production: 0 },
-                effect: { type: "gain_resource", resource: "food", value: 2 },
-                description: "생존을 위한 가장 기초적인 활동입니다."
+                description: "생존을 위한 가장 기초적인 활동입니다.",
+                effect: (state) => ({ resources: { ...state.resources, food: state.resources.food + 2 } })
             },
             {
                 id: "p_warrior",
@@ -324,7 +389,8 @@ export const CARDS_BY_ERA: EraCardGroup[] = [
                 era: 0,
                 cost: { production: 2 },
                 stats: { attack: 2, health: 3, upkeep: 1 },
-                description: "투박한 무기를 든 부족의 수호자입니다."
+                description: "투박한 무기를 든 부족의 수호자입니다.",
+                effect: (state) => ({})
             },
             {
                 id: "p_slinger",
@@ -333,7 +399,8 @@ export const CARDS_BY_ERA: EraCardGroup[] = [
                 era: 0,
                 cost: { production: 2 },
                 stats: { attack: 3, health: 1, upkeep: 1 },
-                description: "멀리서 돌을 던져 공격하지만 맷집이 약합니다."
+                description: "멀리서 돌을 던져 공격하지만 맷집이 약합니다.",
+                effect: (state) => ({})
             },
             {
                 id: "p_cave",
@@ -342,8 +409,12 @@ export const CARDS_BY_ERA: EraCardGroup[] = [
                 era: 0,
                 cost: { production: 3 },
                 stats: { health: 10 },
-                passive: { trigger: "turn_start", type: "gain_resource", target: "production", value: 1 },
-                description: "비바람을 피하는 안식처입니다."
+                passive: { 
+                    trigger: "turn_start", 
+                    effect: (state) => ({ resources: { ...state.resources, production: state.resources.production + 2 } }) 
+                },
+                description: "목표 턴 도달을 위한 초기 자본 엔진입니다.",
+                effect: (state) => ({})
             },
             {
                 id: "p_wall",
@@ -352,8 +423,8 @@ export const CARDS_BY_ERA: EraCardGroup[] = [
                 era: 0,
                 cost: { production: 2 },
                 stats: { health: 15 },
-                effect: { type: "special", value: 3 },
-                description: "야만인의 침입을 막기 위해 뾰족한 나무를 세웠습니다."
+                description: "야만인의 침입을 막기 위해 뾰족한 나무를 세웠습니다.",
+                effect: (state) => ({})
             },
             {
                 id: "p_fire",
@@ -361,8 +432,20 @@ export const CARDS_BY_ERA: EraCardGroup[] = [
                 type: "tech",
                 era: 0,
                 cost: { science: 0 },
-                effect: { type: "buff", target: "self_units", value: 1 },
-                description: "어둠을 밝히고 맹수를 쫓아냅니다."
+                description: "아군 유닛들의 공격력이 증가하고 과학 지식을 얻습니다.",
+                effect: (state) => ({
+                    resources: {
+                        ...state.resources,
+                        science: state.resources.science + 2
+                    },
+                    field: {
+                        ...state.field,
+                        units: state.field.units.map(u => ({
+                            ...u,
+                            stats: { ...u.stats, attack: (u.stats?.attack || 0) + 1 }
+                        }))
+                    }
+                })
             }
         ]
     },
@@ -375,8 +458,8 @@ export const CARDS_BY_ERA: EraCardGroup[] = [
                 type: "action",
                 era: 1,
                 cost: { production: 2 },
-                effect: { type: "gain_resource", resource: "food", value: 5 },
-                description: "물을 다스려 풍요를 가져옵니다."
+                description: "물을 다스려 풍요를 가져옵니다.",
+                effect: (state) => ({ resources: { ...state.resources, food: state.resources.food + 5 } })
             },
             {
                 id: "a_spearman",
@@ -385,7 +468,8 @@ export const CARDS_BY_ERA: EraCardGroup[] = [
                 era: 1,
                 cost: { production: 3 },
                 stats: { attack: 3, health: 5, upkeep: 2 },
-                description: "기병과 야만인에게 효과적인 긴 창을 사용합니다."
+                description: "기병과 야만인에게 효과적인 긴 창을 사용합니다.",
+                effect: (state) => ({})
             },
             {
                 id: "a_farm",
@@ -394,8 +478,12 @@ export const CARDS_BY_ERA: EraCardGroup[] = [
                 era: 1,
                 cost: { production: 4 },
                 stats: { health: 5 },
-                passive: { trigger: "turn_start", type: "gain_resource", target: "food", value: 3 },
-                description: "안정적인 식량 공급원입니다. 방어에는 취약합니다."
+                passive: { 
+                    trigger: "turn_start", 
+                    effect: (state) => ({ resources: { ...state.resources, food: state.resources.food + 3 } }) 
+                },
+                description: "안정적인 식량 공급원입니다. 방어에는 취약합니다.",
+                effect: (state) => ({})
             },
             {
                 id: "a_library",
@@ -404,8 +492,26 @@ export const CARDS_BY_ERA: EraCardGroup[] = [
                 era: 1,
                 cost: { production: 5 },
                 stats: { health: 5 },
-                passive: { trigger: "turn_start", type: "gain_resource", target: "science", value: 2 },
-                description: "지혜를 모아 다음 시대로 나아갑니다."
+                passive: { 
+                    trigger: "turn_start", 
+                    effect: (state) => ({ resources: { ...state.resources, science: state.resources.science + 2 } }) 
+                },
+                description: "지혜를 모아 다음 시대로 나아갑니다.",
+                effect: (state) => ({})
+            },
+            {
+                id: "a_mine",
+                name: "광산",
+                type: "structure",
+                era: 1,
+                cost: { production: 5 },
+                stats: { health: 10 },
+                passive: {
+                    trigger: "turn_start",
+                    effect: (state) => ({ resources: { ...state.resources, production: state.resources.production + 3 } })
+                },
+                description: "생산력 덧셈 엔진의 기틀을 마련합니다.",
+                effect: (state) => ({})
             },
             {
                 id: "a_wall",
@@ -414,8 +520,8 @@ export const CARDS_BY_ERA: EraCardGroup[] = [
                 era: 1,
                 cost: { production: 5 },
                 stats: { health: 30 },
-                effect: { type: "special", value: 7 },
-                description: "쉽게 무너지지 않는 견고한 돌벽입니다."
+                description: "쉽게 무너지지 않는 견고한 돌벽입니다.",
+                effect: (state) => ({})
             }
         ]
     },
@@ -428,8 +534,8 @@ export const CARDS_BY_ERA: EraCardGroup[] = [
                 type: "action",
                 era: 2,
                 cost: { production: 1 },
-                effect: { type: "gain_resource", resource: "production", value: 5 },
-                description: "영주가 백성들에게 자원을 걷습니다."
+                description: "영주가 백성들에게 자원을 걷습니다.",
+                effect: (state) => ({ resources: { ...state.resources, production: state.resources.production + 5 } })
             },
             {
                 id: "m_knight",
@@ -438,7 +544,8 @@ export const CARDS_BY_ERA: EraCardGroup[] = [
                 era: 2,
                 cost: { production: 5 },
                 stats: { attack: 7, health: 6, upkeep: 3 },
-                description: "강력한 돌격으로 전선을 돌파합니다."
+                description: "강력한 돌격으로 전선을 돌파합니다.",
+                effect: (state) => ({})
             },
             {
                 id: "m_crossbow",
@@ -447,7 +554,8 @@ export const CARDS_BY_ERA: EraCardGroup[] = [
                 era: 2,
                 cost: { production: 4 },
                 stats: { attack: 6, health: 3, upkeep: 2 },
-                description: "두꺼운 갑옷도 뚫을 수 있는 강력한 원거리 유닛입니다."
+                description: "두꺼운 갑옷도 뚫을 수 있는 강력한 원거리 유닛입니다.",
+                effect: (state) => ({})
             },
             {
                 id: "m_castle",
@@ -456,8 +564,8 @@ export const CARDS_BY_ERA: EraCardGroup[] = [
                 era: 2,
                 cost: { production: 8 },
                 stats: { health: 50 },
-                effect: { type: "special", value: 12 },
-                description: "난공불락의 요새입니다."
+                description: "난공불락의 요새입니다.",
+                effect: (state) => ({})
             },
             {
                 id: "m_guild",
@@ -466,8 +574,34 @@ export const CARDS_BY_ERA: EraCardGroup[] = [
                 era: 2,
                 cost: { production: 4 },
                 stats: { health: 10 },
-                passive: { trigger: "turn_start", type: "draw", value: 1 },
-                description: "부를 축적하여 더 많은 기회를 창출합니다."
+                description: "부를 축적하여 더 많은 기회를 창출합니다.",
+                effect: (state) => ({})
+            },
+            {
+                id: "m_mill",
+                name: "물레방아",
+                type: "structure",
+                era: 2,
+                cost: { production: 6 },
+                stats: { health: 10 },
+                passive: {
+                    trigger: "turn_start",
+                    effect: (state) => {
+                        // 식량 2를 소모하여 생산력을 +5 하는 1차 변환 엔진
+                        if (state.resources.food >= 2) {
+                            return {
+                                resources: {
+                                    ...state.resources,
+                                    food: state.resources.food - 2,
+                                    production: state.resources.production + 5
+                                }
+                            };
+                        }
+                        return {};
+                    }
+                },
+                description: "식량 2를 소모해 생산력 5를 양산하는 1차 변환 엔진입니다.",
+                effect: (state) => ({})
             }
         ]
     },
@@ -480,8 +614,8 @@ export const CARDS_BY_ERA: EraCardGroup[] = [
                 type: "action",
                 era: 3,
                 cost: { production: 3 },
-                effect: { type: "draw", value: 3 },
-                description: "미지의 세계에서 새로운 자원과 지식을 가져옵니다."
+                description: "미지의 세계에서 새로운 자원과 지식을 가져옵니다.",
+                effect: (state) => ({ resources: { ...state.resources, science: state.resources.science + 10 } })
             },
             {
                 id: "r_musket",
@@ -490,7 +624,8 @@ export const CARDS_BY_ERA: EraCardGroup[] = [
                 era: 3,
                 cost: { production: 4 },
                 stats: { attack: 10, health: 4, upkeep: 3 },
-                description: "화약을 사용하는 현대적 보병의 시초입니다."
+                description: "화약을 사용하는 현대적 보병의 시초입니다.",
+                effect: (state) => ({})
             },
             {
                 id: "r_cannon",
@@ -499,7 +634,8 @@ export const CARDS_BY_ERA: EraCardGroup[] = [
                 era: 3,
                 cost: { production: 6 },
                 stats: { attack: 15, health: 3, upkeep: 4 },
-                description: "적의 성벽과 방어선을 무너뜨리는 압도적 화력입니다."
+                description: "적의 성벽과 방어선을 무너뜨리는 압도적 화력입니다.",
+                effect: (state) => ({})
             },
             {
                 id: "r_university",
@@ -508,8 +644,31 @@ export const CARDS_BY_ERA: EraCardGroup[] = [
                 era: 3,
                 cost: { production: 6 },
                 stats: { health: 10 },
-                passive: { trigger: "turn_start", type: "gain_resource", target: "science", value: 5 },
-                description: "체계적인 학문 연구가 이루어집니다."
+                passive: { 
+                    trigger: "turn_start", 
+                    effect: (state) => ({ resources: { ...state.resources, science: state.resources.science + 5 } }) 
+                },
+                description: "체계적인 학문 연구가 이루어집니다.",
+                effect: (state) => ({})
+            },
+            {
+                id: "r_manufactory",
+                name: "매뉴팩처",
+                type: "structure",
+                era: 3,
+                cost: { production: 8 },
+                stats: { health: 15 },
+                passive: {
+                    trigger: "turn_start",
+                    effect: (state) => ({ 
+                        resources: { 
+                            ...state.resources, 
+                            production: state.resources.production + (state.field.units.length * 2) 
+                        } 
+                    })
+                },
+                description: "인프라 연동 모델로 유닛 수에 비례하여 생산력이 폭증합니다.",
+                effect: (state) => ({})
             },
             {
                 id: "r_printing",
@@ -517,8 +676,8 @@ export const CARDS_BY_ERA: EraCardGroup[] = [
                 type: "tech",
                 era: 3,
                 cost: { science: 0 },
-                effect: { type: "special" },
-                description: "지식의 전파 속도가 혁명적으로 빨라집니다."
+                description: "지식의 전파 속도가 혁명적으로 빨라집니다.",
+                effect: (state) => ({ resources: { ...state.resources, science: state.resources.science + 10 } })
             }
         ]
     },
@@ -526,13 +685,30 @@ export const CARDS_BY_ERA: EraCardGroup[] = [
         era: "Industrial",
         cards: [
             {
+                id: "action_bailout",
+                name: "긴급 구제 금융 (Bailout)",
+                type: "action",
+                era: 4,
+                cost: {},
+                description: "막대한 자원을 즉시 융통하지만, 향후 3턴간 산출량이 반토막(결산 전 절반 삭감)납니다.",
+                effect: (state) => ({
+                    resources: {
+                        food: state.resources.food + 10,
+                        production: state.resources.production + 10,
+                        science: state.resources.science + 10,
+                        energy: state.resources.energy
+                    },
+                    debuffs: [...state.debuffs, { type: 'YIELD_HALVED', duration: 3 }]
+                })
+            },
+            {
                 id: "i_railroad",
                 name: "철도망",
                 type: "action",
                 era: 4,
                 cost: { production: 2 },
-                effect: { type: "gain_resource", resource: "production", value: 10 },
-                description: "물류의 혁명으로 생산 효율이 급증합니다."
+                description: "물류의 혁명으로 생산 효율이 급증합니다.",
+                effect: (state) => ({ resources: { ...state.resources, production: state.resources.production + 10 } })
             },
             {
                 id: "i_infantry",
@@ -541,7 +717,8 @@ export const CARDS_BY_ERA: EraCardGroup[] = [
                 era: 4,
                 cost: { production: 5 },
                 stats: { attack: 12, health: 12, upkeep: 4 },
-                description: "참호를 파고 끈질기게 버티는 방어형 보병입니다."
+                description: "참호를 파고 끈질기게 버티는 방어형 보병입니다.",
+                effect: (state) => ({})
             },
             {
                 id: "i_tank",
@@ -550,7 +727,8 @@ export const CARDS_BY_ERA: EraCardGroup[] = [
                 era: 4,
                 cost: { production: 8 },
                 stats: { attack: 20, health: 15, upkeep: 6 },
-                description: "전장의 판도를 바꾸는 강철의 야수입니다."
+                description: "전장의 판도를 바꾸는 강철의 야수입니다.",
+                effect: (state) => ({})
             },
             {
                 id: "i_factory",
@@ -559,8 +737,18 @@ export const CARDS_BY_ERA: EraCardGroup[] = [
                 era: 4,
                 cost: { production: 7 },
                 stats: { health: 20 },
-                passive: { trigger: "turn_start", type: "gain_resource", target: "production", value: 8 },
-                description: "검은 연기를 내뿜으며 끊임없이 물자를 생산합니다."
+                passive: { 
+                    trigger: "turn_start", 
+                    effect: (state) => ({ 
+                        resources: { 
+                            ...state.resources, 
+                            // 빅테크 모델: 턴당 총 생산량의 50% 추가 산출
+                            production: state.resources.production + Math.floor((state.resources.production || 0) * 0.5) 
+                        } 
+                    }) 
+                },
+                description: "검은 연기를 내뿜으며 끊임없이 물자를 생산합니다. (생산량 50% 폭증)",
+                effect: (state) => ({})
             },
             {
                 id: "i_bunker",
@@ -569,8 +757,8 @@ export const CARDS_BY_ERA: EraCardGroup[] = [
                 era: 4,
                 cost: { production: 6 },
                 stats: { health: 40 },
-                effect: { type: "special", value: 15 },
-                description: "폭격에도 견딜 수 있는 콘크리트 요새입니다."
+                description: "폭격에도 견딜 수 있는 콘크리트 요새입니다.",
+                effect: (state) => ({})
             }
         ]
     },
@@ -583,8 +771,8 @@ export const CARDS_BY_ERA: EraCardGroup[] = [
                 type: "action",
                 era: 5,
                 cost: { production: 0 },
-                effect: { type: "gain_resource", resource: "production", value: 50 },
-                description: "무한한 청정 에너지를 손에 넣었습니다."
+                description: "무한한 청정 에너지를 손에 넣었습니다.",
+                effect: (state) => ({ resources: { ...state.resources, production: state.resources.production + 50 } })
             },
             {
                 id: "s_marine",
@@ -593,7 +781,8 @@ export const CARDS_BY_ERA: EraCardGroup[] = [
                 era: 5,
                 cost: { production: 10 },
                 stats: { attack: 30, health: 25, upkeep: 8 },
-                description: "강화복을 입고 어떤 환경에서도 작전이 가능합니다."
+                description: "강화복을 입고 어떤 환경에서도 작전이 가능합니다.",
+                effect: (state) => ({})
             },
             {
                 id: "s_shield",
@@ -602,8 +791,8 @@ export const CARDS_BY_ERA: EraCardGroup[] = [
                 era: 5,
                 cost: { production: 15 },
                 stats: { health: 100 },
-                effect: { type: "special", value: 30 },
-                description: "궤도 폭격조차 막아내는 에너지 장막입니다."
+                description: "궤도 폭격조차 막아내는 에너지 장막입니다.",
+                effect: (state) => ({})
             },
             {
                 id: "s_lab",
@@ -612,8 +801,12 @@ export const CARDS_BY_ERA: EraCardGroup[] = [
                 era: 5,
                 cost: { production: 10 },
                 stats: { health: 20 },
-                passive: { trigger: "turn_start", type: "gain_resource", target: "science", value: 20 },
-                description: "물리 법칙을 초월한 기술을 연구합니다."
+                passive: { 
+                    trigger: "turn_start", 
+                    effect: (state) => ({ resources: { ...state.resources, science: state.resources.science + 20 } }) 
+                },
+                description: "물리 법칙을 초월한 기술을 연구합니다.",
+                effect: (state) => ({})
             },
             {
                 id: "s_rocket",
@@ -622,8 +815,8 @@ export const CARDS_BY_ERA: EraCardGroup[] = [
                 era: 5,
                 cost: { production: 50 },
                 stats: { health: 50 },
-                effect: { type: "special" },
-                description: "인류의 새로운 터전을 찾아 떠나는 방주입니다. 5턴 유지 시 승리!"
+                description: "인류의 새로운 터전을 찾아 떠나는 방주입니다. 5턴 유지 시 승리!",
+                effect: (state) => ({})
             }
         ]
     }

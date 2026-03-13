@@ -1,0 +1,136 @@
+.game-report-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    color: white;
+
+    &.victory-bg {
+        background: linear-gradient(135deg, #090a0f, #1b2735 40%, rgba(26, 68, 126, 0.8));
+    }
+
+    &.gameover-bg {
+        background: linear-gradient(135deg, #1f0101, #3a0b0b 40%, rgba(30,30,30,0.9));
+    }
+
+    .report-content {
+        background: rgba(0, 0, 0, 0.7);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 16px;
+        padding: 40px;
+        max-width: 800px;
+        width: 90%;
+        text-align: center;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+
+        .victory-icon {
+            color: #4facfe;
+            margin-bottom: 20px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .report-title {
+            font-size: 3rem;
+            margin: 0 0 10px 0;
+            color: #ffd700;
+            text-shadow: 0 2px 10px rgba(255, 215, 0, 0.3);
+        }
+
+        .report-subtitle {
+            font-size: 1.2rem;
+            color: #bbb;
+            margin-bottom: 30px;
+        }
+
+        .report-stats {
+            text-align: left;
+            margin-bottom: 30px;
+
+            .section-title {
+                color: #4facfe;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+                padding-bottom: 10px;
+                margin-bottom: 20px;
+                font-size: 1.3rem;
+            }
+
+            .stat-grid {
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+                gap: 15px;
+                margin-bottom: 30px;
+
+                @media (max-width: 768px) {
+                    grid-template-columns: repeat(2, 1fr);
+                }
+
+                .stat-card {
+                    background: rgba(255, 255, 255, 0.05);
+                    padding: 15px;
+                    border-radius: 8px;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    border: 1px solid rgba(255, 255, 255, 0.05);
+
+                    span {
+                        font-size: 0.9rem;
+                        color: #aaa;
+                        margin-bottom: 5px;
+                    }
+
+                    strong {
+                        font-size: 1.4rem;
+                        color: #fff;
+                    }
+                }
+            }
+        }
+
+        .report-actions {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+
+            button {
+                padding: 12px 24px;
+                font-size: 1.1rem;
+                font-weight: bold;
+                border: none;
+                border-radius: 8px;
+                cursor: pointer;
+                transition: all 0.2s;
+
+                &.btn-copy {
+                    background-color: #4a4e69;
+                    color: white;
+
+                    &:hover {
+                        background-color: #3b3e54;
+                    }
+                }
+
+                &.btn-restart {
+                    background-color: #4facfe;
+                    color: white;
+
+                    &:hover {
+                        background-color: #3b8bce;
+                        transform: translateY(-2px);
+                    }
+                }
+            }
+        }
+    }
+}
+
+@keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+    100% { transform: translateY(0px); }
+}

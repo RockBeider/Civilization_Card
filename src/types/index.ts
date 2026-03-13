@@ -65,7 +65,7 @@ export interface RaceData {
         food: number;
         prod: number;
         sci: number;
-        energy?: number;
+        energy: number;
     };
     img: string; // URL or path
     starter_deck: string[];

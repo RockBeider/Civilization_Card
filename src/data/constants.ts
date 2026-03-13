@@ -31,15 +31,15 @@ export const GAME_CONSTANTS = {
     PLAYER_MAX_HP: 50,
 
     // 매 턴 기본 제공 생산력
-    BASE_PRODUCTION: 3,
+    BASE_PRODUCTION: 4,
 
     // 매 턴 드로우하는 카드 수
     HAND_SIZE: 5,
 
     // 필드 슬롯 제한
     FIELD_SLOTS: {
-        structures: 5,
-        units: 5
+        structures: 8,
+        units: 8
     },
 
     // 시대 발전 비용 (인덱스 = 현재 시대)
@@ -47,7 +47,7 @@ export const GAME_CONSTANTS = {
     ERA_COSTS: [20, 50, 100, 200, 500],
 
     // 기아 피해 (식량 1 부족당)
-    STARVATION_DAMAGE: 5,
+    STARVATION_DAMAGE: 3,
 
     // 초기 식량
     STARTING_FOOD: 10,

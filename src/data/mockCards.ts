@@ -163,18 +163,18 @@ export const createStarterDeck = (): Card[] => {
         deck.push({ ...mockCards.gathering });
     }
 
-    // 3x Worker
-    for (let i = 0; i < 3; i++) {
-        deck.push({ ...mockCards.worker });
-    }
+    // 1x Worker
+    deck.push({ ...mockCards.worker });
 
     // 2x Hunt
     for (let i = 0; i < 2; i++) {
         deck.push({ ...mockCards.hunt });
     }
 
-    // 1x Research
-    deck.push({ ...mockCards.research });
+    // 3x Research
+    for (let i = 0; i < 3; i++) {
+        deck.push({ ...mockCards.research });
+    }
 
     return deck;
 };

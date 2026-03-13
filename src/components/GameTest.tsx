@@ -5,6 +5,8 @@
 import React from 'react';
 import { useGameStore } from '../store';
 import { createStarterDeck } from '../data/mockCards';
+import { playTurn } from '../simulation/AutoBot';
+import { debugLogger } from '../utils/DebugLogger';
 
 interface GameTestProps {
     onClose?: () => void;
@@ -31,6 +33,90 @@ const GameTest: React.FC<GameTestProps> = ({ onClose }) => {
     const handleStartGame = () => {
         const starterDeck = createStarterDeck();
         startGame(starterDeck, 'debug_race');
+    };
+
+    const [isAutoPlaying, setIsAutoPlaying] = React.useState(false);
+    const autoPlayRef = React.useRef<number | NodeJS.Timeout | null>(null);
+
+    const handleStep = () => {
+        const currentState = useGameStore.getState();
+        if (currentState.status === 'gameover' || currentState.status === 'victory') {
+            setIsAutoPlaying(false);
+            return;
+        }
+        
+        // 1턴 액션 실행
+        playTurn(currentState);
+
+        // 실행 직후 바뀐 상태 확인하여 게임이 끝났다면 종합 로그 남기기
+        const nextState = useGameStore.getState();
+        if (nextState.status === 'gameover' || nextState.status === 'victory') {
+             const resultTxt = nextState.status === 'victory' ? '✅ 승리' : '💀 패배';
+             const reasonTxt = nextState.status === 'gameover' 
+                ? (nextState.logs.slice(-5).join(" ").includes("식량 부족") ? "만성적 기아(아사)" : "위험 페널티 피해 누적") 
+                : "우주 시대 도달 완료";
+             const endReport = '[AutoBot 종료 보고서] 결과: ' + resultTxt + ' | 도달 턴: ' + nextState.turn + '턴 | 최종 시대: ' + nextState.era + ' | 원인/달성: ' + reasonTxt + ' | 남은 식량: ' + nextState.resources.food + ', 남은 체력: ' + nextState.playerStats.health;
+             useGameStore.getState().addLog(endReport);
+             setIsAutoPlaying(false);
+        }
+    };
+
+    React.useEffect(() => {
+        if (isAutoPlaying) {
+            autoPlayRef.current = setInterval(handleStep, 500); // 0.5초 간격으로 자동 진행
+        } else {
+            if (autoPlayRef.current) {
+                clearInterval(autoPlayRef.current as number);
+                autoPlayRef.current = null;
+            }
+        }
+        return () => {
+            if (autoPlayRef.current) clearInterval(autoPlayRef.current as number);
+        };
+    }, [isAutoPlaying]);
+
+    const handleExportJson = () => {
+        const currentState = useGameStore.getState();
+        const exportData = {
+            turn: currentState.turn,
+            era: currentState.era,
+            status: currentState.status,
+            phase: currentState.phase,
+            resources: currentState.resources,
+            playerStats: currentState.playerStats,
+            deckCounts: {
+                hand: currentState.deck.hand.length,
+                draw: currentState.deck.drawPile.length,
+                discard: currentState.deck.discardPile.length,
+            },
+            hand: currentState.deck.hand.map(c => ({ name: c.name, type: c.type, cost: c.cost })),
+            field: {
+                structures: currentState.field.structures.map(c => ({ name: c.name })),
+                units: currentState.field.units.map(c => ({ name: c.name, attack: c.stats?.attack })),
+            },
+            currentCrisis: currentState.currentCrisis ? {
+                name: currentState.currentCrisis.name,
+                requirement: currentState.currentCrisis.requirement,
+                penalty: currentState.currentCrisis.penalty
+            } : null,
+            recentLogs: currentState.logs.slice(-50)
+        };
+
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportData, null, 2));
+        const downloadAnchorNode = document.createElement('a');
+        downloadAnchorNode.setAttribute("href", dataStr);
+        downloadAnchorNode.setAttribute("download", 'debug_turn_' + currentState.turn + '.json');
+        document.body.appendChild(downloadAnchorNode);
+        downloadAnchorNode.click();
+        downloadAnchorNode.remove();
+    };
+
+    const handleCopyLogs = () => {
+        const allLogs = debugLogger.getAllLogs();
+        const text = allLogs.join('\n');
+        navigator.clipboard.writeText('[GameTest 전체 로그 분석용 - 총 ' + allLogs.length + '줄]\n' + text)
+            .then(() => alert('📝 전체 자동 플레이 로그(' + allLogs.length + '줄)가 복사되었습니다! AI에게 전달해주세요.'))
+            .catch(err => console.error('복사 실패:', err));
     };
 
     return (
@@ -148,6 +234,15 @@ const GameTest: React.FC<GameTestProps> = ({ onClose }) => {
                             <button style={styles.buttonCheat} onClick={() => cheat.addResources(10)}>
                                 [CHEAT] +10 자원
                             </button>
+                            <button style={{ ...styles.button, backgroundColor: '#8e44ad' }} onClick={handleStep}>
+                                ▶ 1턴 스텝
+                            </button>
+                            <button 
+                                style={{ ...styles.button, backgroundColor: isAutoPlaying ? '#e67e22' : '#2980b9' }} 
+                                onClick={() => setIsAutoPlaying(!isAutoPlaying)}
+                            >
+                                {isAutoPlaying ? '⏸ 일시정지' : '▶▶ 오토 플레이'}
+                            </button>
                         </>
                     )}
                     {(status === 'gameover' || status === 'victory') && (
@@ -160,7 +255,13 @@ const GameTest: React.FC<GameTestProps> = ({ onClose }) => {
 
             {/* Logs */}
             <div style={styles.section}>
-                <h2>📜 로그</h2>
+                <div style={styles.logHeaderRow}>
+                    <h2>📜 로그</h2>
+                    <div>
+                        <button style={styles.buttonAction} onClick={handleCopyLogs}>📋 텍스트 복사</button>
+                        <button style={styles.buttonAction} onClick={handleExportJson}>💾 JSON 다운로드</button>
+                    </div>
+                </div>
                 <div style={styles.logBox}>
                     {logs.slice(-10).reverse().map((log, idx) => (
                         <div key={idx} style={styles.logEntry}>{log}</div>
@@ -298,6 +399,22 @@ const styles: Record<string, React.CSSProperties> = {
         color: '#fff',
         border: 'none',
         borderRadius: '6px',
+    },
+    buttonAction: {
+        padding: '6px 12px',
+        fontSize: '12px',
+        cursor: 'pointer',
+        backgroundColor: '#4a4e69',
+        color: '#fff',
+        border: '1px solid #9a8c98',
+        borderRadius: '4px',
+        marginLeft: '10px',
+    },
+    logHeaderRow: {
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: '10px',
     },
     logBox: {
         backgroundColor: '#1a1a2e',

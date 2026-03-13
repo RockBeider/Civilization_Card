@@ -3,7 +3,7 @@
 // ============================================================
 
 // --- Resource Types ---
-export type ResourceType = 'food' | 'production' | 'science';
+export type ResourceType = 'food' | 'production' | 'science' | 'energy';
 
 // --- Card Types ---
 export type CardType = 'action' | 'structure' | 'unit' | 'tech' | 'crisis';
@@ -29,7 +29,7 @@ export type EffectTargetType = 'player' | 'enemy' | 'self_units' | 'self' | 'foo
 export type PhaseType = 'start' | 'action' | 'crisis' | 'end';
 
 // --- Game Status ---
-export type GameStatus = 'title' | 'race_selection' | 'playing' | 'gameover' | 'victory';
+export type GameStatus = 'title' | 'race_selection' | 'playing' | 'gameover' | 'victory' | 'library' | 'simulation';
 
 // --- Crisis Requirement ---
 export interface CrisisRequirement {
@@ -65,6 +65,7 @@ export interface Resources {
     food: number;
     production: number;
     science: number;
+    energy: number;
 }
 
 // --- Card Definition (Runtime) ---
@@ -126,21 +127,22 @@ export interface CardData {
         upkeep?: number;      // 턴당 식량 소모량 (유닛)
     };
 
-    // 효과 (로직 처리를 위한 식별자 및 수치)
+    // 효과 (로직 처리를 위한 식별자 및 수치 또는 함수형 로직)
     effect?: {
         type: EffectType;           // 효과 타입
         target?: EffectTargetType | string;  // 대상
         value?: number;             // 효과 수치
         resource?: ResourceType;    // 대상 자원
         result?: string;            // 변환 결과 (transform_hand용)
-    };
+    } | ((state: GameState) => Partial<GameState>);
 
     // 패시브 효과 (턴 시작/종료 시 발동)
     passive?: {
         trigger: 'turn_start' | 'turn_end';
-        type: EffectType;
+        type?: EffectType;
         target?: string;
         value?: number;
+        effect?: (state: GameState) => Partial<GameState>;
     };
 
     // 플레이 불가능 플래그 (위기 카드 등)
@@ -190,6 +192,10 @@ export interface FieldState {
 export interface GameState {
     // Core Resources
     resources: Resources;
+    
+    // Status Effects (Debuffs, etc.)
+    debuffs: { type: string; duration: number }[];
+
     era: number;
 
     // Deck Management
@@ -237,7 +243,9 @@ export interface GameState {
 // --- Game Actions (Zustand Store Methods) ---
 export interface GameActions {
     // Game Flow
+    openLibrary: () => void;
     enterRaceSelection: () => void;
+    enterSimulation: () => void;
     startGame: (starterDeck: Card[], race: string) => void;
     resetGame: () => void;
 
@@ -245,16 +253,20 @@ export interface GameActions {
     drawCard: (count: number) => void;
     playCard: (cardInstanceId: string) => void;
     discardCard: (cardInstanceId: string) => void;
+    
+    // Race Ability
+    useRaceAbility: (targetCardInstanceId?: string) => void;
 
     // Shop Actions
     refreshShop: () => void;
     buyCard: (card: Card) => void;
     removeCard: (cardInstanceId: string) => void;
+    removeFieldCard: (cardInstanceId: string, fieldType: 'structure' | 'unit') => void;
 
     // Phase Management
     nextPhase: () => void;
     executeStartPhase: () => void;
-    resolveCrisis: () => void;
+    resolveCrisis: (choice: 'SUCCESS' | 'HEDGE' | 'STOP_LOSS') => void;
 
     // Turn Management (Legacy - now handled by phases)
     endTurn: () => void;
@@ -275,4 +287,50 @@ export interface GameActions {
 
 // --- Combined Store Type ---
 export type GameStore = GameState & GameActions;
+
+// ============================================================
+// Simulation Types (AutoBot)
+// ============================================================
+
+export interface SimulationResult {
+    isWin: boolean;
+    totalTurns: number;
+    // index가 시대 번호(1~5). 해당 시대 도달에 필요한 턴수 (없으면 -1)
+    eraReachedTurns: number[]; 
+    crisisHedgeCount: number;
+    crisisStopLossCount: number;
+    crisisSuccessCount: number;
+    deathReason?: 'starvation' | 'crisis_damage' | 'unknown';
+}
+
+export interface SimulationStats {
+    totalRuns: number;
+    wins: number;
+    losses: number;
+    avgTotalTurns: number;
+    avgEraTurns: number[];
+    avgCrisisHedge: number;
+    avgCrisisStopLoss: number;
+    avgCrisisSuccess: number;
+    deathReasons: Record<string, number>;
+}
+
+export interface SimulationState {
+    isRunning: boolean;
+    progress: number; // 진행된 게임 수 (0 ~ targetRuns)
+    targetRuns: number;
+    results: SimulationResult[];
+    globalStats: SimulationStats | null;
+    simLogs: string[];
+}
+
+export interface SimulationActions {
+    startSimulation: (runs: number) => void;
+    addResult: (result: SimulationResult) => void;
+    finishSimulation: () => void;
+    resetSimulation: () => void;
+    addSimLog: (msg: string) => void;
+}
+
+export type SimulationStore = SimulationState & SimulationActions;
 

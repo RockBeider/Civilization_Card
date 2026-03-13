@@ -7,7 +7,9 @@ import { useGameStore } from './store';
 import { useSound } from './hooks/useSound';
 import { RaceSelectionScreen } from './components/screens/RaceSelectionScreen';
 import { StartScreen } from './components/screens/StartScreen';
-import { VictoryScreen } from './components/screens/VictoryScreen';
+import { CardLibraryScreen } from './components/screens/CardLibraryScreen';
+import { SimulationDashboard } from './components/screens/SimulationDashboard';
+import { GameReportScreen } from './components/screens/GameReportScreen';
 import GameTest from './components/GameTest';
 import { createStarterDeck } from './data/mockCards';
 import type { Card } from './types';
@@ -15,11 +17,18 @@ import IconGuide from './components/IconGuide';
 import TopBar from './components/TopBar';
 import FieldSection from './components/game/FieldSection';
 import HandSection from './components/game/HandSection';
+import CrisisModal from './components/game/CrisisModal';
 import './styles/main.scss';
 // URL 파라미터로 가이드 페이지 접근 체크
 const urlParams = new URLSearchParams(window.location.search);
 const showGuide = urlParams.get('guide') === 'true';
 const initialDebug = urlParams.get('debug') === 'true';
+declare global {
+    interface Window {
+        toggleDebug: () => void;
+        openSimulation: () => void;
+    }
+}
 
 
 
@@ -30,6 +39,11 @@ function App() {
         window.toggleDebug = () => {
             setShowDebug(prev => !prev);
             console.log('Debug mode toggled');
+        };
+
+        window.openSimulation = () => {
+            console.log(`[AutoBot] Opening simulation dashboard...`);
+            useGameStore.getState().enterSimulation();
         };
 
         return () => {
@@ -45,6 +59,7 @@ function App() {
     };
     const {
         status,
+        phase,
         resources,
         era,
         turn,
@@ -58,6 +73,7 @@ function App() {
         playCard,
         endTurn,
         enterRaceSelection,
+        openLibrary,
     } = useGameStore();
 
     // Sound Hook
@@ -92,8 +108,14 @@ function App() {
             <StartScreen
                 onStartGame={enterRaceSelection}
                 onContinue={() => alert("저장된 게임이 없습니다.")} // TODO: Implement load functionality
+                onLibrary={openLibrary}
             />
         );
+    }
+
+    // --- Render: Simulation ---
+    if (status === 'simulation') {
+        return <SimulationDashboard onBack={resetGame} />;
     }
 
     // --- Render: Race Selection ---
@@ -105,24 +127,14 @@ function App() {
         );
     }
 
-    // --- Render: Victory ---
-    if (status === 'victory') {
-        return <VictoryScreen onRestart={() => window.location.reload()} />;
+    // --- Render: Victory or Game Over (Game Report) ---
+    if (status === 'victory' || status === 'gameover') {
+        return <GameReportScreen onRestart={() => window.location.reload()} />;
     }
 
-    // --- Render: Game Over ---
-    if (status === 'gameover') {
-        return (
-            <div className="gameover-screen">
-                <div className="gameover-content">
-                    <h1>💀 문명 멸망</h1>
-                    <p>역사 속으로 사라졌습니다.</p>
-                    <button onClick={() => window.location.reload()} className="btn-restart">
-                        다시 시작
-                    </button>
-                </div>
-            </div>
-        );
+    // --- Render: Card Library ---
+    if (status === 'library') {
+        return <CardLibraryScreen />;
     }
 
     // --- Render: Main Game ---
@@ -156,6 +168,7 @@ function App() {
                     onPlayCard={handlePlayCard}
                     onEndTurn={endTurn}
                 />
+                {phase === 'crisis' && <CrisisModal />}
             </div >
         </div >
     );

@@ -1,0 +1,57 @@
+src/App.tsx(76,9): error TS6133: 'enterSimulation' is declared but its value is never read.
+src/components/game/CrisisModal.tsx(1,35): error TS6133: 'useEffect' is declared but its value is never read.
+src/components/game/CrisisModal.tsx(52,34): error TS6133: 'event' is declared but its value is never read.
+src/components/screens/CardLibraryScreen.tsx(1,8): error TS6133: 'React' is declared but its value is never read.
+src/components/screens/CardLibraryScreen.tsx(4,15): error TS6196: 'CardData' is declared but never used.
+src/components/screens/RaceSelectionScreen.tsx(39,68): error TS2345: Argument of type 'import("C:/Work Folder/Game/Civilization_Card/src/types/index").RaceData' is not assignable to parameter of type 'import("C:/Work Folder/Game/Civilization_Card/src/types").RaceData'.
+  The types of 'bonus.energy' are incompatible between these types.
+    Type 'number | undefined' is not assignable to type 'number'.
+      Type 'undefined' is not assignable to type 'number'.
+src/components/screens/SimulationDashboard.tsx(4,1): error TS6133: 'SimulationResult' is declared but its value is never read.
+src/components/screens/SimulationDashboard.tsx(12,46): error TS6133: 'results' is declared but its value is never read.
+src/data/cards.ts(328,26): error TS6133: 'state' is declared but its value is never read.
+src/data/cards.ts(338,26): error TS6133: 'state' is declared but its value is never read.
+src/data/cards.ts(352,26): error TS6133: 'state' is declared but its value is never read.
+src/data/cards.ts(362,26): error TS6133: 'state' is declared but its value is never read.
+src/data/cards.ts(403,26): error TS6133: 'state' is declared but its value is never read.
+src/data/cards.ts(417,26): error TS6133: 'state' is declared but its value is never read.
+src/data/cards.ts(431,26): error TS6133: 'state' is declared but its value is never read.
+src/data/cards.ts(445,26): error TS6133: 'state' is declared but its value is never read.
+src/data/cards.ts(455,26): error TS6133: 'state' is declared but its value is never read.
+src/data/cards.ts(479,26): error TS6133: 'state' is declared but its value is never read.
+src/data/cards.ts(489,26): error TS6133: 'state' is declared but its value is never read.
+src/data/cards.ts(499,26): error TS6133: 'state' is declared but its value is never read.
+src/data/cards.ts(509,26): error TS6133: 'state' is declared but its value is never read.
+src/data/cards.ts(535,26): error TS6133: 'state' is declared but its value is never read.
+src/data/cards.ts(559,26): error TS6133: 'state' is declared but its value is never read.
+src/data/cards.ts(569,26): error TS6133: 'state' is declared but its value is never read.
+src/data/cards.ts(583,26): error TS6133: 'state' is declared but its value is never read.
+src/data/cards.ts(602,26): error TS6133: 'state' is declared but its value is never read.
+src/data/cards.ts(652,26): error TS6133: 'state' is declared but its value is never read.
+src/data/cards.ts(662,26): error TS6133: 'state' is declared but its value is never read.
+src/data/cards.ts(682,26): error TS6133: 'state' is declared but its value is never read.
+src/data/cards.ts(692,26): error TS6133: 'state' is declared but its value is never read.
+src/data/cards.ts(716,26): error TS6133: 'state' is declared but its value is never read.
+src/data/cards.ts(726,26): error TS6133: 'state' is declared but its value is never read.
+src/data/cards.ts(740,26): error TS6133: 'state' is declared but its value is never read.
+src/data/cards.ts(750,26): error TS6133: 'state' is declared but its value is never read.
+src/simulation/AutoBot.ts(8,19): error TS6133: 'state' is declared but its value is never read.
+src/simulation/AutoBot.ts(10,20): error TS6133: 'turn' is declared but its value is never read.
+src/simulation/AutoBot.ts(108,11): error TS6133: 'simStore' is declared but its value is never read.
+src/store.ts(9,31): error TS6133: 'getCurseCardById' is declared but its value is never read.
+src/store.ts(278,23): error TS2741: Property 'energy' is missing in type '{ food: number; production: number; science: number; }' but required in type 'Resources'.
+src/store.ts(525,71): error TS2345: Argument of type '{ resources: { food: number; production: 3; science: number; }; debuffs: { type: string; duration: number; }[]; era: number; deck: DeckState; field: FieldState; turn: number; status: GameStatus; ... 27 more ...; cheat: { addResources: (amount: number) => void; drawCards: (count: number) => void; }; }' is not assignable to parameter of type 'GameState'.
+  Types of property 'resources' are incompatible.
+    Property 'energy' is missing in type '{ food: number; production: 3; science: number; }' but required in type 'Resources'.
+src/store.ts(528,88): error TS2322: Type 'number' is not assignable to type '3'.
+src/store.ts(538,21): error TS2322: Type 'number' is not assignable to type '3'.
+src/store.ts(549,36): error TS2304: Cannot find name 'CrisisCardData'.
+src/store.ts(573,21): error TS2741: Property 'energy' is missing in type '{ food: number; production: 3; science: number; }' but required in type 'Resources'.
+src/store.ts(812,28): error TS2304: Cannot find name 'newDeck'.
+src/store.ts(814,42): error TS2304: Cannot find name 'newDeck'.
+src/store.ts(946,25): error TS2345: Argument of type '(state: GameStore) => { resources: { food: number; production: number; science: number; }; logs: string[]; }' is not assignable to parameter of type 'GameStore | Partial<GameStore> | ((state: GameStore) => GameStore | Partial<GameStore>)'.
+  Type '(state: GameStore) => { resources: { food: number; production: number; science: number; }; logs: string[]; }' is not assignable to type '(state: GameStore) => GameStore | Partial<GameStore>'.
+    Type '{ resources: { food: number; production: number; science: number; }; logs: string[]; }' is not assignable to type 'GameStore | Partial<GameStore>'.
+      Type '{ resources: { food: number; production: number; science: number; }; logs: string[]; }' is not assignable to type 'Partial<GameStore>'.
+        Types of property 'resources' are incompatible.
+          Property 'energy' is missing in type '{ food: number; production: number; science: number; }' but required in type 'Resources'.

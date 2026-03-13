@@ -1,0 +1,39 @@
+src/components/game/CrisisModal.tsx(1,35): error TS6133: 'useEffect' is declared but its value is never read.
+src/components/game/CrisisModal.tsx(52,34): error TS6133: 'event' is declared but its value is never read.
+src/components/GameTest.tsx(9,10): error TS2300: Duplicate identifier 'debugLogger'.
+src/components/GameTest.tsx(10,10): error TS2300: Duplicate identifier 'debugLogger'.
+src/components/GameTest.tsx(55,20): error TS6133: 'resultTxt' is declared but its value is never read.
+src/components/GameTest.tsx(56,20): error TS6133: 'reasonTxt' is declared but its value is never read.
+src/components/screens/CardLibraryScreen.tsx(1,8): error TS6133: 'React' is declared but its value is never read.
+src/components/screens/CardLibraryScreen.tsx(4,15): error TS6196: 'CardData' is declared but never used.
+src/components/screens/SimulationDashboard.tsx(4,1): error TS6133: 'SimulationResult' is declared but its value is never read.
+src/components/screens/SimulationDashboard.tsx(12,46): error TS6133: 'results' is declared but its value is never read.
+src/data/cards.ts(328,26): error TS6133: 'state' is declared but its value is never read.
+src/data/cards.ts(338,26): error TS6133: 'state' is declared but its value is never read.
+src/data/cards.ts(352,26): error TS6133: 'state' is declared but its value is never read.
+src/data/cards.ts(362,26): error TS6133: 'state' is declared but its value is never read.
+src/data/cards.ts(403,26): error TS6133: 'state' is declared but its value is never read.
+src/data/cards.ts(417,26): error TS6133: 'state' is declared but its value is never read.
+src/data/cards.ts(431,26): error TS6133: 'state' is declared but its value is never read.
+src/data/cards.ts(445,26): error TS6133: 'state' is declared but its value is never read.
+src/data/cards.ts(455,26): error TS6133: 'state' is declared but its value is never read.
+src/data/cards.ts(479,26): error TS6133: 'state' is declared but its value is never read.
+src/data/cards.ts(489,26): error TS6133: 'state' is declared but its value is never read.
+src/data/cards.ts(499,26): error TS6133: 'state' is declared but its value is never read.
+src/data/cards.ts(509,26): error TS6133: 'state' is declared but its value is never read.
+src/data/cards.ts(535,26): error TS6133: 'state' is declared but its value is never read.
+src/data/cards.ts(559,26): error TS6133: 'state' is declared but its value is never read.
+src/data/cards.ts(569,26): error TS6133: 'state' is declared but its value is never read.
+src/data/cards.ts(583,26): error TS6133: 'state' is declared but its value is never read.
+src/data/cards.ts(602,26): error TS6133: 'state' is declared but its value is never read.
+src/data/cards.ts(652,26): error TS6133: 'state' is declared but its value is never read.
+src/data/cards.ts(662,26): error TS6133: 'state' is declared but its value is never read.
+src/data/cards.ts(682,26): error TS6133: 'state' is declared but its value is never read.
+src/data/cards.ts(692,26): error TS6133: 'state' is declared but its value is never read.
+src/data/cards.ts(716,26): error TS6133: 'state' is declared but its value is never read.
+src/data/cards.ts(726,26): error TS6133: 'state' is declared but its value is never read.
+src/data/cards.ts(740,26): error TS6133: 'state' is declared but its value is never read.
+src/data/cards.ts(750,26): error TS6133: 'state' is declared but its value is never read.
+src/simulation/AutoBot.ts(8,26): error TS6133: 'state' is declared but its value is never read.
+src/simulation/AutoBot.ts(10,20): error TS6133: 'turn' is declared but its value is never read.
+src/simulation/AutoBot.ts(115,11): error TS6133: 'simStore' is declared but its value is never read.
